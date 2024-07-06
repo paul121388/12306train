@@ -4,6 +4,7 @@ import com.jiawa.train.CommonResp.CommonResp;
 import com.jiawa.train.member.req.MemberRegisterReq;
 import com.jiawa.train.member.service.MemberService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public CommonResp register(MemberRegisterReq memberRegisterReq) {
+    public CommonResp register(@Valid MemberRegisterReq memberRegisterReq) {
         Long id = memberService.register(memberRegisterReq);
         return new CommonResp(id);
     }
