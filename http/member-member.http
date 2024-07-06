@@ -13,4 +13,4 @@ mobile=123456
 POST http://localhost:8000/member/member/register
 Content-Type: application/x-www-form-urlencoded
 
-mobile=123455
+mobile=1234555

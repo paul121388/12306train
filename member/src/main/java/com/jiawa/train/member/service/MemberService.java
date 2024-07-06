@@ -1,5 +1,7 @@
 package com.jiawa.train.member.service;
 
+import com.jiawa.train.exception.BusinessException;
+import com.jiawa.train.exception.BusinessExceptionEnum;
 import com.jiawa.train.member.domain.Member;
 import com.jiawa.train.member.domain.MemberExample;
 import com.jiawa.train.member.mapper.MemberMapper;
@@ -28,7 +30,7 @@ public class MemberService {
 
         List<Member> members = memberMapper.selectByExample(memberExample);
         if(!members.isEmpty()){
-            throw new RuntimeException("手机号已经注册过");
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
 
         // 2. 注册新的手机号
