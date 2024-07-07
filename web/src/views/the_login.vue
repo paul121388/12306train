@@ -39,8 +39,8 @@
 
 <script>
 import { defineComponent, reactive } from 'vue';
-// import axios from 'axios';
-// import { notification } from 'ant-design-vue';
+import axios from 'axios';
+import { notification } from 'ant-design-vue';
 // import { useRouter } from 'vue-router'
 // import store from "@/store";
 
@@ -55,31 +55,32 @@ export default defineComponent({
     });
 
     const sendCode = () => {
-      /*axios.post("/member/member/send-code", {
-        mobile: loginForm.mobile
-      }).then(response => {
-        let data = response.data;
-        if (data.success) {
-          notification.success({ description: '发送验证码成功！' });
+      axios.post("/member/member/send-code",{
+        mobilie: loginForm.mobile
+      }).then(reponse =>{
+        let data = reponse.data;
+        if(data.success){
+          notification.success({description: '发送验证码成功！'});
           loginForm.code = "8888";
-        } else {
-          notification.error({ description: data.message });
         }
-      });*/
+        else {
+          notification.error({description: data.message});
+        }
+      });
     };
 
     const login = () => {
-      /*axios.post("/member/member/login", loginForm).then((response) => {
+      axios.post("/member/member/login", loginForm).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({ description: '登录成功！' });
-          // 登录成功，跳到控台主页
+          /*// 登录成功，跳到控台主页
           router.push("/welcome");
-          store.commit("setMember", data.content);
+          store.commit("setMember", data.content);*/
         } else {
           notification.error({ description: data.message });
         }
-      })*/
+      })
     };
 
     return {

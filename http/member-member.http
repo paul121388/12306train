@@ -23,7 +23,21 @@ Content-Type: application/x-www-form-urlencoded
 mobile=13000000001
 
 ###
+#手机号不存在
+POST http://localhost:8000/member/member/login
+Content-Type: application/x-www-form-urlencoded
 
+mobile=13000000002&code=8888
+
+###
+#验证码错误
+POST http://localhost:8000/member/member/login
+Content-Type: application/x-www-form-urlencoded
+
+mobile=13000000001&code=8887
+
+###
+#正确登录
 POST http://localhost:8000/member/member/login
 Content-Type: application/x-www-form-urlencoded
 

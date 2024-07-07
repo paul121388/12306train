@@ -43,10 +43,7 @@ public class MemberService {
         // 0. 获取手机号
         String mobile = memberRegisterReq.getMobile();
         // 1. 判断手机号是否已经注册过
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-
-        List<Member> members = memberMapper.selectByExample(memberExample);
+        List<Member> members = getMembers(mobile);
         if(CollUtil.isNotEmpty(members)){
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
@@ -68,10 +65,7 @@ public class MemberService {
         // 0. 获取手机号
         String mobile = memberSendCodeReq.getMobile();
         // 1. 判断手机号是否已经注册过
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-
-        List<Member> members = memberMapper.selectByExample(memberExample);
+        List<Member> members = getMembers(mobile);
         if(CollUtil.isEmpty(members)){
             LOG.info("手机号未注册过,插入一条手机号");
             Member member = new Member();
@@ -99,10 +93,7 @@ public class MemberService {
         String mobile = memberLoginReq.getMobile();
         String code = memberLoginReq.getCode();
         // 1. 判断手机号是否已经注册过
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-
-        List<Member> members = memberMapper.selectByExample(memberExample);
+        List<Member> members = getMembers(mobile);
         if(CollUtil.isEmpty(members)){
             throw new BusinessException(BusinessExceptionEnum.MEMBERE_MOBILE_NOT_EXIST);
         }
@@ -111,5 +102,12 @@ public class MemberService {
         }
         // 2. 登录成功
         return BeanUtil.copyProperties(members.get(0), MemberLoginResp.class);
+    }
+
+    private List<Member> getMembers(String mobile) {
+        MemberExample memberExample = new MemberExample();
+        memberExample.createCriteria().andMobileEqualTo(mobile);
+
+        return memberMapper.selectByExample(memberExample);
     }
 }
