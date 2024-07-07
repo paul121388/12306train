@@ -1,7 +1,9 @@
 package com.jiawa.train.exception;
 
 public enum BusinessExceptionEnum {
-    MEMBER_MOBILE_EXIST("手机号已经注册过");
+    MEMBER_MOBILE_EXIST("手机号已经注册过"),
+    MEMBERE_MOBILE_NOT_EXIST("手机号不存在，请先获取验证码"),
+    MEMBER_CODE_ERROR("验证码错误");
 
     private String desc;
 

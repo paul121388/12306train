@@ -1,5 +1,6 @@
 package com.jiawa.train.member.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.jiawa.train.exception.BusinessException;
@@ -7,8 +8,10 @@ import com.jiawa.train.exception.BusinessExceptionEnum;
 import com.jiawa.train.member.domain.Member;
 import com.jiawa.train.member.domain.MemberExample;
 import com.jiawa.train.member.mapper.MemberMapper;
+import com.jiawa.train.member.req.MemberLoginReq;
 import com.jiawa.train.member.req.MemberRegisterReq;
 import com.jiawa.train.member.req.MemberSendCodeReq;
+import com.jiawa.train.member.resp.MemberLoginResp;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -27,7 +30,7 @@ public class MemberService {
      * 获取会员数量
      * @return
      */
-    public int count() {
+    public Integer count() {
         return Math.toIntExact(memberMapper.countByExample(null));
     }
 
@@ -44,7 +47,7 @@ public class MemberService {
         memberExample.createCriteria().andMobileEqualTo(mobile);
 
         List<Member> members = memberMapper.selectByExample(memberExample);
-        if(!members.isEmpty()){
+        if(CollUtil.isNotEmpty(members)){
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
 
@@ -57,6 +60,10 @@ public class MemberService {
         return member.getId();
     }
 
+    /**
+     * 发送验证码
+     * @param memberSendCodeReq
+     */
     public void sendCode(MemberSendCodeReq memberSendCodeReq) {
         // 0. 获取手机号
         String mobile = memberSendCodeReq.getMobile();
@@ -81,5 +88,28 @@ public class MemberService {
         // 生成验证码
         String code = RandomUtil.randomString(4);
         LOG.info("手机号:{},验证码:{}", mobile, code);
+    }
+
+    /**
+     * 登录
+     * @param memberLoginReq
+     */
+    public MemberLoginResp login(MemberLoginReq memberLoginReq) {
+        // 0. 获取手机号和验证码
+        String mobile = memberLoginReq.getMobile();
+        String code = memberLoginReq.getCode();
+        // 1. 判断手机号是否已经注册过
+        MemberExample memberExample = new MemberExample();
+        memberExample.createCriteria().andMobileEqualTo(mobile);
+
+        List<Member> members = memberMapper.selectByExample(memberExample);
+        if(CollUtil.isEmpty(members)){
+            throw new BusinessException(BusinessExceptionEnum.MEMBERE_MOBILE_NOT_EXIST);
+        }
+        if(!"8888".equals(code)){
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_CODE_ERROR);
+        }
+        // 2. 登录成功
+        return BeanUtil.copyProperties(members.get(0), MemberLoginResp.class);
     }
 }
