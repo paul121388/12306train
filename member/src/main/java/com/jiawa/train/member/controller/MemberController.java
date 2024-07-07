@@ -2,6 +2,7 @@ package com.jiawa.train.member.controller;
 
 import com.jiawa.train.CommonResp.CommonResp;
 import com.jiawa.train.member.req.MemberRegisterReq;
+import com.jiawa.train.member.req.MemberSendCodeReq;
 import com.jiawa.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -26,6 +27,17 @@ public class MemberController {
     public CommonResp register(@Valid MemberRegisterReq memberRegisterReq) {
         Long id = memberService.register(memberRegisterReq);
         return new CommonResp(id);
+    }
+
+    /**
+     * 发送验证码
+     * @param memberSendCodeReq
+     * @return
+     */
+    @PostMapping("/send-code")
+    public CommonResp register(@Valid MemberSendCodeReq memberSendCodeReq) {
+        memberService.sendCode(memberSendCodeReq);
+        return new CommonResp();
     }
 
 

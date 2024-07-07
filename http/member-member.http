@@ -14,3 +14,10 @@ POST http://localhost:8000/member/member/register
 Content-Type: application/x-www-form-urlencoded
 
 mobile=321
+
+###
+
+POST http://localhost:8000/member/member/send-code
+Content-Type: application/x-www-form-urlencoded
+
+mobile=13000000001
