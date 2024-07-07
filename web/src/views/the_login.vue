@@ -50,15 +50,15 @@ export default defineComponent({
     // const router = useRouter();
 
     const loginForm = reactive({
-      mobile: '13000000000',
-      code: '',
+      mobile: "13000000000",
+      code: "",
     });
 
     const sendCode = () => {
       axios.post("http://localhost:8000/member/member/send-code",{
-        mobilie: loginForm.mobile
-      }).then(reponse =>{
-        let data = reponse.data;
+        mobile: loginForm.mobile
+      }).then(response =>{
+        let data = response.data;
         if(data.success){
           notification.success({description: '发送验证码成功！'});
           loginForm.code = "8888";

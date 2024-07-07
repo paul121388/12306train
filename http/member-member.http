@@ -18,27 +18,40 @@ mobile=321
 ###
 
 POST http://localhost:8000/member/member/send-code
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-mobile=13000000001
+{
+"mobile":"13000000001"
+}
+
 
 ###
 #手机号不存在
 POST http://localhost:8000/member/member/login
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-mobile=13000000002&code=8888
+{
+  "mobile": "13000000002",
+  "code": "8888"
+}
+
 
 ###
 #验证码错误
 POST http://localhost:8000/member/member/login
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-mobile=13000000001&code=8887
+{
+  "mobile": "13000000001",
+  "code": "888"
+}
 
 ###
 #正确登录
 POST http://localhost:8000/member/member/login
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-mobile=13000000001&code=8888
+{
+  "mobile": "13000000001",
+  "code": "8888"
+}

@@ -8,10 +8,7 @@ import com.jiawa.train.member.resp.MemberLoginResp;
 import com.jiawa.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/member")
@@ -19,12 +16,21 @@ public class MemberController<memberLoginReq> {
     @Resource
     private MemberService memberService;
 
+    /**
+     * 查询总数
+     * @return
+     */
     @GetMapping("/count")
     public CommonResp<Integer> count() {
         Integer count = memberService.count();
         return new CommonResp(count);
     }
 
+    /**
+     * 注册
+     * @param memberRegisterReq
+     * @return
+     */
     @PostMapping("/register")
     public CommonResp<Long> register(@Valid MemberRegisterReq memberRegisterReq) {
         Long id = memberService.register(memberRegisterReq);
@@ -37,13 +43,13 @@ public class MemberController<memberLoginReq> {
      * @return
      */
     @PostMapping("/send-code")
-    public CommonResp register(@Valid MemberSendCodeReq memberSendCodeReq) {
+    public CommonResp register(@Valid @RequestBody MemberSendCodeReq memberSendCodeReq) {
         memberService.sendCode(memberSendCodeReq);
         return new CommonResp();
     }
 
     @PostMapping("/login")
-    public CommonResp<MemberLoginResp> register(@Valid MemberLoginReq memberLoginReq) {
+    public CommonResp<MemberLoginResp> register(@Valid @RequestBody MemberLoginReq memberLoginReq) {
         MemberLoginResp resp = memberService.login(memberLoginReq);
         return new CommonResp<>(resp);
     }
