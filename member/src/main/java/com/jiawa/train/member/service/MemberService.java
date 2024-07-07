@@ -76,7 +76,7 @@ public class MemberService {
         }
         else {
             LOG.info("手机号已注册,不插入手机号");
-            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
+//            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
 
         // 生成验证码
