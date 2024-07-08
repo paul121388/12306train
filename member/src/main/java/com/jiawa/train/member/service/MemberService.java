@@ -12,6 +12,7 @@ import com.jiawa.train.member.req.MemberLoginReq;
 import com.jiawa.train.member.req.MemberRegisterReq;
 import com.jiawa.train.member.req.MemberSendCodeReq;
 import com.jiawa.train.member.resp.MemberLoginResp;
+import com.jiawa.train.util.JwtUtil;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -100,10 +101,19 @@ public class MemberService {
         if(!"8888".equals(code)){
             throw new BusinessException(BusinessExceptionEnum.MEMBER_CODE_ERROR);
         }
+
+        String token = JwtUtil.createToken(members.get(0).getId(), members.get(0).getMobile());
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(members.get(0), MemberLoginResp.class);
+        memberLoginResp.setToken(token);
         // 2. 登录成功
-        return BeanUtil.copyProperties(members.get(0), MemberLoginResp.class);
+        return memberLoginResp;
     }
 
+    /**
+     * 获取会员列表
+     * @param mobile
+     * @return
+     */
     private List<Member> getMembers(String mobile) {
         MemberExample memberExample = new MemberExample();
         memberExample.createCriteria().andMobileEqualTo(mobile);

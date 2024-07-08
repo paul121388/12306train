@@ -53,5 +53,6 @@ Content-Type: application/json
 
 {
   "mobile": "13000000001",
-  "code": "8888"
+  "code": "8888",
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjA0NDg0ODEsIm1vYmlsZSI6IjEzMDkyNzY4NDUiLCJpZCI6MSwiZXhwIjoxNzIwNTM0ODgxLCJpYXQiOjE3MjA0NDg0ODF9.1BCthM5pPRb1IoMDPWhMqgFHO0FYVyAFfcHhcHvBNFg"
 }

@@ -3,16 +3,14 @@ package com.jiawa.train.member.resp;
 public class MemberLoginResp {
     private Long id;
     private String mobile;
+    private String token;
 
+    public String getToken() {
+        return token;
+    }
 
-
-
-    @Override
-    public String toString() {
-        return "MemberLoginResp{" +
-                "mobile='" + mobile + '\'' +
-                ", id=" + id +
-                '}';
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Long getId() {
@@ -29,6 +27,15 @@ public class MemberLoginResp {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    @Override
+    public String toString() {
+        return "MemberLoginResp{" +
+                "id=" + id +
+                ", mobile='" + mobile + '\'' +
+                ", token='" + token + '\'' +
+                '}';
     }
 
 }
