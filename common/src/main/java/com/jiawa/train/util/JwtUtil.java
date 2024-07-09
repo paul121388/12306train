@@ -22,7 +22,7 @@ public class JwtUtil {
         // 设置时间
         // token签发时间，token过期时间，token生效时间
         DateTime now = DateTime.now();
-        DateTime expTime = now.offsetNew(DateField.HOUR, 24);
+        DateTime expTime = now.offsetNew(DateField.SECOND, 10);
 
 
         // playload：上述三个时间，id，mobile
