@@ -1,7 +1,5 @@
 package com.jiawa.train.gateway.Util;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTPayload;
@@ -9,16 +7,12 @@ import cn.hutool.jwt.JWTUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
 public class JwtUtil {
     private static final Logger LOG = LoggerFactory.getLogger(JwtUtil.class);
 
     private static final String key = "Jiawa12306";
 
-    public static String createToken(Long id, String mobile){
+    /*public static String createToken(Long id, String mobile){
         // 设置时间
         // token签发时间，token过期时间，token生效时间
         DateTime now = DateTime.now();
@@ -38,7 +32,7 @@ public class JwtUtil {
         String token = JWTUtil.createToken(playLoad, key.getBytes(StandardCharsets.UTF_8));
         LOG.info("createToken: {}", token);
         return token;
-    }
+    }*/
 
     public static boolean validate(String token){
         try {

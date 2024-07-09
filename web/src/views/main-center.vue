@@ -12,7 +12,7 @@
         <a-layout-content
             :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-          Content
+          所有会员总数：{{count}}
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -22,6 +22,8 @@
 import {defineComponent, ref} from 'vue';
 import The_header from "@/components/the_header";
 import The_sider_view from "@/components/the_sider";
+import axios from "axios";
+import {notification} from "ant-design-vue";
 
 export default defineComponent({
   components: {
@@ -29,7 +31,17 @@ export default defineComponent({
     The_header,
   },
   setup() {
+    const count = ref(0);
+    axios.get("/member/member/count").then((response) => {
+      let data = response.data;
+      if (data.success) {
+        count.value = data.content;
+      } else {
+        notification.error({ description: data.message });
+      }
+    })
     return {
+      count,
       collapsed: ref(false),
     };
   },
