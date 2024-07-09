@@ -1,3 +1,4 @@
+/*
 package com.jiawa.train.gateway.config;
 
 import org.slf4j.Logger;
@@ -24,3 +25,4 @@ public class Test1Filter implements GlobalFilter, Ordered {
         return 0;
     }
 }
+*/

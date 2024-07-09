@@ -17,6 +17,16 @@ public class MemberController<memberLoginReq> {
     private MemberService memberService;
 
     /**
+     * 测试
+     * @return
+     */
+    @GetMapping("/hello")
+    public CommonResp hello() {
+//        System.out.println("hello world!");;
+        return new CommonResp("hello world!");
+    }
+
+    /**
      * 查询总数
      * @return
      */
@@ -48,6 +58,11 @@ public class MemberController<memberLoginReq> {
         return new CommonResp();
     }
 
+    /**
+     * 登录
+     * @param memberLoginReq
+     * @return
+     */
     @PostMapping("/login")
     public CommonResp<MemberLoginResp> register(@Valid @RequestBody MemberLoginReq memberLoginReq) {
         MemberLoginResp resp = memberService.login(memberLoginReq);

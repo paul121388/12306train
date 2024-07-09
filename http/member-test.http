@@ -1,11 +1,11 @@
-GET http://localhost:8001/member/hello
+GET http://localhost:8000/member/member/hello
 Accept: application/json
-
+token: 132
 ###
 
 GET http://localhost:8000/member/member/count
 Accept: application/json
-
+token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjA1MTM1ODQsIm1vYmlsZSI6IjEzMDAwMDAwMDAxIiwiaWQiOjE4MDk4OTMzMzAwMDg1NDMyMzIsImV4cCI6MTcyMDU5OTk4NCwiaWF0IjoxNzIwNTEzNTg0fQ.Yq6T2waDbphnyPUGoyJOxgKBxAtKUC0BJjIk8_DPIoA
 ###
 
 GET http://localhost:8000
