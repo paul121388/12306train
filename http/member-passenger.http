@@ -1,0 +1,17 @@
+POST http://localhost:8001/member/passenger/register
+Content-Type: application/json
+
+{
+  "name": "test",
+  "idCard": "123",
+  "type": "1",
+  "memberId": "123"
+}
+
+###
+
+GET http://localhost:8001/member/passenger/hello
+Content-Type: application/json
+
+
+
