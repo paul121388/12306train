@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * 会员拦截器，用于获取登录后的会员的信息
+ */
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(MemberInterceptor.class);
