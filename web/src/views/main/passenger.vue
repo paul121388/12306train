@@ -52,6 +52,8 @@
 <script>
 
 import {defineComponent, ref, reactive} from 'vue';
+import axios from "axios";
+import {notification} from "ant-design-vue";
 
 export default defineComponent({
   name: "passenger-view",
@@ -72,24 +74,24 @@ export default defineComponent({
     };
 
     const handleOk = e => {
+      axios.post('/member/passenger/save', passenger).then(response => {
+        let data = response.data;
+        if(data.success){
+          notification.success({description: "保存成功！"});
+          open.value = false;
+        }else {
+          notification.error({description: data.message});
+        }
+      })
       console.log(e);
       open.value = false;
     };
 
-    const onFinish = values => {
-      console.log('Success:', values);
-    };
-
-    const onFinishFailed = errorInfo => {
-      console.log('Failed:', errorInfo);
-    };
 
     return {
       open,
       showModal,
       handleOk,
-      onFinish,
-      onFinishFailed,
       passenger
     };
   }
