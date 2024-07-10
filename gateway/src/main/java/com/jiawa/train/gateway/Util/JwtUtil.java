@@ -46,7 +46,7 @@ public class JwtUtil {
         }
     }
 
-    public static JSONObject getJwtPlayLoads(String token){
+    public static JSONObject getJSONObject(String token){
         JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
         JSONObject payloads = jwt.getPayloads();
         payloads.remove(JWTPayload.ISSUED_AT);

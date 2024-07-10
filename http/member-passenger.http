@@ -38,11 +38,16 @@ Content-Type: application/json
   "memberId": "123"
 }
 
-> {%
-client.log(JSON.stringify(response.body));
-client.log(JSON.stringify(response.body.content.token));
-client.global.set("token", response.body.content.token);
- %}
+###
+POST http://localhost:8000/member/passenger/save
+Content-Type: application/json
+token:{{token}}
+
+{
+  "name": "test",
+  "idCard": "123",
+  "type": "1"
+}
 
 
 

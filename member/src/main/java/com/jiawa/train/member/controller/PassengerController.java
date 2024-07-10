@@ -1,6 +1,6 @@
 package com.jiawa.train.member.controller;
 
-import com.jiawa.train.CommonResp.CommonResp;
+import com.jiawa.train.resp.CommonResp;
 import com.jiawa.train.member.req.PassengerSaveReq;
 import com.jiawa.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
@@ -31,7 +31,7 @@ public class PassengerController<memberLoginReq> {
      * @param memberRegisterReq
      * @return
      */
-    @PostMapping("/register")
+    @PostMapping("/save")
     public CommonResp<Object> save(@Valid @RequestBody PassengerSaveReq memberRegisterReq) {
         passengerService.save(memberRegisterReq);
         return new CommonResp<>();

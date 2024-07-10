@@ -47,7 +47,7 @@ public class JwtUtil {
         return validate;
     }
 
-    public static JSONObject getJwtPlayLoads(String token){
+    public static JSONObject getJSONObject(String token){
         JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
         JSONObject payloads = jwt.getPayloads();
         payloads.remove(JWTPayload.ISSUED_AT);
@@ -60,7 +60,7 @@ public class JwtUtil {
     public static void main(String[] args) {
         String token = createToken(1L, "1309276845");
         boolean validate = validate(token);
-        JSONObject jwtPlayLoads = getJwtPlayLoads(token);
+        JSONObject jwtPlayLoads = getJSONObject(token);
 
     }
 
