@@ -1,5 +1,6 @@
-POST http://localhost:8001/member/passenger/register
+POST http://localhost:8000/member/passenger/register
 Content-Type: application/json
+token:{{token}}
 
 {
   "name": "test",
@@ -7,6 +8,8 @@ Content-Type: application/json
   "type": "1",
   "memberId": "123"
 }
+
+
 
 ###
 #测试
@@ -23,6 +26,23 @@ Content-Type: application/json
   "type": "1",
   "memberId": "123"
 }
+
+###
+#通过网关发送请求，需要带上token
+POST http://localhost:8001/member/passenger/register
+Content-Type: application/json
+
+{
+  "idCard": "123",
+  "type": "1",
+  "memberId": "123"
+}
+
+> {%
+client.log(JSON.stringify(response.body));
+client.log(JSON.stringify(response.body.content.token));
+client.global.set("token", response.body.content.token);
+ %}
 
 
 
