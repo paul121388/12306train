@@ -3,6 +3,7 @@ package com.jiawa.train.member.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import com.github.pagehelper.PageHelper;
 import com.jiawa.train.context.LoginMemberContext;
 import com.jiawa.train.member.domain.Passenger;
 import com.jiawa.train.member.domain.PassengerExample;
@@ -48,7 +49,8 @@ public class PassengerService {
 //            criteria.andMemberIdEqualTo(LoginMemberContext.getMemberId());
             criteria.andMemberIdEqualTo(req.getMemberId());
         }
-
+        // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
+        PageHelper.startPage(2, 2);
         List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
         return BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
     }
