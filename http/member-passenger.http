@@ -44,7 +44,7 @@ Content-Type: application/json
 token:{{token}}
 
 {
-  "name": "test3",
+  "name": "test4",
   "idCard": "1233121",
   "type": "3"
 }
@@ -53,5 +53,19 @@ token:{{token}}
 GET http://localhost:8000/member/passenger/query-list?page=1&size=30
 Accept: application/json
 token:{{token}}
+
+###
+#修改当前乘车人信息
+POST http://localhost:8000/member/passenger/save
+Content-Type: application/json
+token:{{token}}
+
+{
+  "id": "1811383864787079168",
+  "memberId": "1809893330008543232",
+  "name": "test15",
+  "idCard": "1233121",
+  "type": "1"
+}
 
 
