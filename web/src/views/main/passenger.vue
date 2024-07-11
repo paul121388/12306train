@@ -1,7 +1,11 @@
 <template>
   <div>
     <p>
-      <a-button type="primary" @click="showModal">新增</a-button>
+      <a-space>
+        <a-button type="primary" @click="showModal">新增</a-button>
+        <a-button type="primary" @click="handleQuery()">刷新</a-button>
+      </a-space>
+
     </p>
     <a-table :columns="columns" :data-source="passengers" :pagination="pagination" @change="handlePageChange"></a-table>
     <a-modal v-model:visible="open" title="乘车人" @ok="handleOk"
@@ -110,6 +114,12 @@ export default defineComponent({
     };
 
     const handleQuery = (param) =>{
+      if(!param){
+        param = {
+          page: 1,
+          size: pagination.pageSize
+        };
+      }
       axios.get('/member/passenger/query-list',{
         params:{
           page: param.page,
@@ -152,7 +162,8 @@ export default defineComponent({
       passengers,
       columns,
       pagination,
-      handlePageChange
+      handlePageChange,
+      handleQuery
     };
   }
 });
