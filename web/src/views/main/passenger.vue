@@ -5,7 +5,6 @@
         <a-button type="primary" @click="showModal">新增</a-button>
         <a-button type="primary" @click="handleQuery()">刷新</a-button>
       </a-space>
-
     </p>
     <a-table :columns="columns"
              :data-source="passengers"
@@ -111,6 +110,10 @@ export default defineComponent({
         if (data.success) {
           notification.success({description: "保存成功！"});
           open.value = false;
+          handleQuery({
+            page: pagination.current,
+            size: pagination.pageSize
+          });
         } else {
           notification.error({description: data.message});
         }
@@ -167,6 +170,7 @@ export default defineComponent({
       showModal,
       handleOk,
       passengers,
+      passenger,
       columns,
       pagination,
       handlePageChange,

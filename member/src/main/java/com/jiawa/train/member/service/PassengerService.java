@@ -48,7 +48,10 @@ public class PassengerService {
      */
     public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req){
         PassengerExample passengerExample = new PassengerExample();
+
+        passengerExample.setOrderByClause("id desc");
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
+
         if(ObjectUtil.isNotNull(LoginMemberContext.getMemberId())){
             // 为了让后续控制台调用方法时，没有会员ID（因为不是会员登录）也能使用这个方法，这里的memberID应该在controller赋值
 //            criteria.andMemberIdEqualTo(LoginMemberContext.getMemberId());
