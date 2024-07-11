@@ -3,7 +3,7 @@
     <p>
       <a-button type="primary" @click="showModal">新增</a-button>
     </p>
-    <a-table :columns="columns" :data-source="data"></a-table>
+    <a-table :columns="columns" :data-source="passengers"></a-table>
     <a-modal v-model:visible="open" title="乘车人" @ok="handleOk"
              ok-text="确认" cancel-text="取消">
       <a-form
@@ -54,7 +54,7 @@
 </template>
 <script>
 
-import {defineComponent, ref, reactive} from 'vue';
+import {defineComponent, ref, reactive, onMounted} from 'vue';
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
@@ -72,7 +72,7 @@ export default defineComponent({
       updateTime: undefined,
 
     });
-
+    const passengers = ref([]);
     const columns = [
       {
         title: '姓名',
@@ -80,46 +80,17 @@ export default defineComponent({
         key: 'name',
       },
       {
-        title: '年龄',
-        dataIndex: 'age',
-        key: 'age',
+        title: '身份证',
+        dataIndex: 'idCard',
+        key: 'idCard',
       },
       {
-        title: '地址',
-        dataIndex: 'address',
-        key: 'address',
-      },
-      /*{
-        title: 'Tags',
-        key: 'tags',
-        dataIndex: 'tags',
-      },*/
-      /*{
-        title: 'Action',
-        key: 'action',
-      },*/
-    ];
-    const data = [
-      {
-        key: '1',
-        name: '胡彦斌',
-        age: 32,
-        address: '西湖区湖底公园1号',
-      },
-      {
-        key: '2',
-        name: '胡彦祖',
-        age: 42,
-        address: '西湖区湖底公园1号',
-      },
-      {
-        key: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
+        title: '类型',
+        dataIndex: 'type',
+        key: 'type',
       },
     ];
+
     const showModal = () => {
       open.value = true;
     };
@@ -138,14 +109,33 @@ export default defineComponent({
       open.value = false;
     };
 
+    const handleQuery = (param) =>{
+      axios.get('/member/passenger/query-list',{
+        params:{
+          page: param.page,
+          size: param.size
+        }
+      }).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          passengers.value = data.content.list;
+        }
+        else {
+          notification.error({description: data.message});
+        }
+      });
+    }
+
+    onMounted(() => {
+      handleQuery({page: 1, size: 2});
+    });
 
     return {
       open,
       showModal,
       handleOk,
-      passenger,
+      passengers,
       columns,
-      data
     };
   }
 });
