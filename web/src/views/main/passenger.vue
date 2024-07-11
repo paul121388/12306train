@@ -2,7 +2,7 @@
   <div>
     <p>
       <a-space>
-        <a-button type="primary" @click="showModal">新增</a-button>
+        <a-button type="primary" @click="onAdd">新增</a-button>
         <a-button type="primary" @click="handleQuery()">刷新</a-button>
       </a-space>
     </p>
@@ -10,8 +10,15 @@
              :data-source="passengers"
              :pagination="pagination"
              @change="handlePageChange"
-             :loading="loading"/>
-
+             :loading="loading">
+      <template #bodyCell="{column, record}">
+        <template v-if="column.dataIndex === 'operation'">
+          <a-space>
+            <a @click="onEdit(record)">编辑</a>
+          </a-space>
+        </template>
+      </template>
+    </a-table>
     <a-modal v-model:visible="open" title="乘车人" @ok="handleOk"
              ok-text="确认" cancel-text="取消">
       <a-form
@@ -20,8 +27,6 @@
           :label-col="{ span: 8 }"
           :wrapper-col="{ span: 16 }"
           autocomplete="off"
-          @finish="onFinish"
-          @finishFailed="onFinishFailed"
       >
         <a-form-item
             label="姓名"
@@ -62,7 +67,7 @@
 </template>
 <script>
 
-import {defineComponent, ref, reactive, onMounted} from 'vue';
+import {defineComponent, ref, onMounted} from 'vue';
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
@@ -70,7 +75,7 @@ export default defineComponent({
   name: "passenger-view",
   setup() {
     const open = ref(false);
-    const passenger = reactive({
+    let passenger = ref({
       id: undefined,
       memberId: undefined,
       name: undefined,
@@ -97,22 +102,30 @@ export default defineComponent({
         title: '类型',
         dataIndex: 'type',
         key: 'type',
-      },
+      }, {
+        title: '操作',
+        dataIndex: 'operation'
+      }
     ];
 
-    const showModal = () => {
+    const onAdd = () => {
+      open.value = true;
+    };
+
+    const onEdit = (record) => {
+      passenger.value = record;
       open.value = true;
     };
 
     const handleOk = e => {
-      axios.post('/member/passenger/save', passenger).then(response => {
+      axios.post('/member/passenger/save', passenger.value).then(response => {
         let data = response.data;
         if (data.success) {
           notification.success({description: "保存成功！"});
           open.value = false;
           handleQuery({
-            page: pagination.current,
-            size: pagination.pageSize
+            page: pagination.value.current,
+            size: pagination.value.pageSize
           });
         } else {
           notification.error({description: data.message});
@@ -126,7 +139,7 @@ export default defineComponent({
       if (!param) {
         param = {
           page: 1,
-          size: pagination.pageSize
+          size: pagination.value.pageSize
         };
       }
       loading.value = true;
@@ -140,15 +153,15 @@ export default defineComponent({
         let data = response.data;
         if (data.success) {
           passengers.value = data.content.list;
-          pagination.current = param.page;
-          pagination.total = data.content.total;
+          pagination.value.current = param.page;
+          pagination.value.total = data.content.total;
         } else {
           notification.error({description: data.message});
         }
       });
     }
 
-    const pagination = reactive({
+    const pagination = ref({
       total: 0,
       current: 1,
       pageSize: 2,
@@ -156,18 +169,18 @@ export default defineComponent({
 
     const handlePageChange = (pagination) => {
       handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize,
+        page: pagination.value.current,
+        size: pagination.value.pageSize
       })
     }
 
     onMounted(() => {
-      handleQuery({page: 1, size: pagination.pageSize});
+      handleQuery({page: 1, size: pagination.value.pageSize});
     });
 
     return {
       open,
-      showModal,
+      onAdd,
       handleOk,
       passengers,
       passenger,
@@ -175,7 +188,8 @@ export default defineComponent({
       pagination,
       handlePageChange,
       handleQuery,
-      loading
+      loading,
+      onEdit,
     };
   }
 });
