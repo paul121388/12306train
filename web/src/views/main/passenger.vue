@@ -7,7 +7,12 @@
       </a-space>
 
     </p>
-    <a-table :columns="columns" :data-source="passengers" :pagination="pagination" @change="handlePageChange"></a-table>
+    <a-table :columns="columns"
+             :data-source="passengers"
+             :pagination="pagination"
+             @change="handlePageChange"
+             :loading="loading"/>
+
     <a-modal v-model:visible="open" title="乘车人" @ok="handleOk"
              ok-text="确认" cancel-text="取消">
       <a-form
@@ -77,6 +82,7 @@ export default defineComponent({
 
     });
     const passengers = ref([]);
+    let loading = ref(false);
     const columns = [
       {
         title: '姓名',
@@ -113,26 +119,27 @@ export default defineComponent({
       open.value = false;
     };
 
-    const handleQuery = (param) =>{
-      if(!param){
+    const handleQuery = (param) => {
+      if (!param) {
         param = {
           page: 1,
           size: pagination.pageSize
         };
       }
-      axios.get('/member/passenger/query-list',{
-        params:{
+      loading.value = true;
+      axios.get('/member/passenger/query-list', {
+        params: {
           page: param.page,
           size: param.size
         }
       }).then((response) => {
+        loading.value = false;
         let data = response.data;
         if (data.success) {
           passengers.value = data.content.list;
           pagination.current = param.page;
           pagination.total = data.content.total;
-        }
-        else {
+        } else {
           notification.error({description: data.message});
         }
       });
@@ -163,7 +170,8 @@ export default defineComponent({
       columns,
       pagination,
       handlePageChange,
-      handleQuery
+      handleQuery,
+      loading
     };
   }
 });
