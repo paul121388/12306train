@@ -75,6 +75,11 @@ export default defineComponent({
   name: "passenger-view",
   setup() {
     const open = ref(false);
+    const pagination = ref({
+      total: 0,
+      current: 1,
+      pageSize: 2
+    });
     let passenger = ref({
       id: undefined,
       memberId: undefined,
@@ -109,11 +114,12 @@ export default defineComponent({
     ];
 
     const onAdd = () => {
+      passenger.value={};
       open.value = true;
     };
 
     const onEdit = (record) => {
-      passenger.value = record;
+      passenger.value = window.Tool.copy(record);
       open.value = true;
     };
 
@@ -161,16 +167,10 @@ export default defineComponent({
       });
     }
 
-    const pagination = ref({
-      total: 0,
-      current: 1,
-      pageSize: 2,
-    });
-
     const handlePageChange = (pagination) => {
       handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize
+        page: pagination.current,
+        size: pagination.pageSize
       })
     }
 
