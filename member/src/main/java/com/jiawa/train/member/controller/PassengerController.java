@@ -47,7 +47,7 @@ public class PassengerController<memberLoginReq> {
      * @return
      */
     @GetMapping("/query-list")
-    public CommonResp<List<PassengerQueryResp>> queryList(PassengerQueryReq req) {
+    public CommonResp<List<PassengerQueryResp>> queryList(@Valid PassengerQueryReq req) {
         req.setMemberId(LoginMemberContext.getMemberId());
         List<PassengerQueryResp> passengerQueryRespList = passengerService.queryList(req);
         return new CommonResp<>(passengerQueryRespList);
