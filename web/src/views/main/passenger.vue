@@ -1,8 +1,11 @@
 <template>
   <div>
-    <a-button type="primary" @click="showModal">新增</a-button>
+    <p>
+      <a-button type="primary" @click="showModal">新增</a-button>
+    </p>
+    <a-table :columns="columns" :data-source="data"></a-table>
     <a-modal v-model:visible="open" title="乘车人" @ok="handleOk"
-              ok-text="确认" cancel-text="取消">
+             ok-text="确认" cancel-text="取消">
       <a-form
           :model="passenger"
           name="basic"
@@ -17,7 +20,7 @@
             name="name"
             :rules="[{ required: true, message: '请输入姓名!' }]"
         >
-          <a-input v-model:value="passenger.name" />
+          <a-input v-model:value="passenger.name"/>
         </a-form-item>
 
         <a-form-item
@@ -25,7 +28,7 @@
             name="idCard"
             :rules="[{ required: true, message: '请输入身份证号!' }]"
         >
-          <a-input v-model:value="passenger.idCard" />
+          <a-input v-model:value="passenger.idCard"/>
         </a-form-item>
 
         <a-form-item
@@ -69,6 +72,54 @@ export default defineComponent({
       updateTime: undefined,
 
     });
+
+    const columns = [
+      {
+        title: '姓名',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: '年龄',
+        dataIndex: 'age',
+        key: 'age',
+      },
+      {
+        title: '地址',
+        dataIndex: 'address',
+        key: 'address',
+      },
+      /*{
+        title: 'Tags',
+        key: 'tags',
+        dataIndex: 'tags',
+      },*/
+      /*{
+        title: 'Action',
+        key: 'action',
+      },*/
+    ];
+    const data = [
+      {
+        key: '1',
+        name: '胡彦斌',
+        age: 32,
+        address: '西湖区湖底公园1号',
+      },
+      {
+        key: '2',
+        name: '胡彦祖',
+        age: 42,
+        address: '西湖区湖底公园1号',
+      },
+      {
+        key: '3',
+        name: 'Joe Black',
+        age: 32,
+        address: 'Sidney No. 1 Lake Park',
+        tags: ['cool', 'teacher'],
+      },
+    ];
     const showModal = () => {
       open.value = true;
     };
@@ -76,10 +127,10 @@ export default defineComponent({
     const handleOk = e => {
       axios.post('/member/passenger/save', passenger).then(response => {
         let data = response.data;
-        if(data.success){
+        if (data.success) {
           notification.success({description: "保存成功！"});
           open.value = false;
-        }else {
+        } else {
           notification.error({description: data.message});
         }
       })
@@ -92,7 +143,9 @@ export default defineComponent({
       open,
       showModal,
       handleOk,
-      passenger
+      passenger,
+      columns,
+      data
     };
   }
 });
