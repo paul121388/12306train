@@ -3,7 +3,7 @@
     <p>
       <a-button type="primary" @click="showModal">新增</a-button>
     </p>
-    <a-table :columns="columns" :data-source="passengers" :pagination="pagination"></a-table>
+    <a-table :columns="columns" :data-source="passengers" :pagination="pagination" @change="handlePageChange"></a-table>
     <a-modal v-model:visible="open" title="乘车人" @ok="handleOk"
              ok-text="确认" cancel-text="取消">
       <a-form
@@ -119,6 +119,7 @@ export default defineComponent({
         let data = response.data;
         if (data.success) {
           passengers.value = data.content.list;
+          pagination.current = param.page;
           pagination.total = data.content.total;
         }
         else {
@@ -133,8 +134,15 @@ export default defineComponent({
       pageSize: 2,
     });
 
+    const handlePageChange = (pagination) => {
+      handleQuery({
+        page: pagination.current,
+        size: pagination.pageSize,
+      })
+    }
+
     onMounted(() => {
-      handleQuery({page: 1, size: 2});
+      handleQuery({page: 1, size: pagination.pageSize});
     });
 
     return {
@@ -143,7 +151,8 @@ export default defineComponent({
       handleOk,
       passengers,
       columns,
-      pagination
+      pagination,
+      handlePageChange
     };
   }
 });
