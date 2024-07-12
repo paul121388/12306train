@@ -16,6 +16,23 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <!-- mybatis generator 自动生成代码插件 -->
@@ -24,8 +41,9 @@
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
-                    <configurationFile>src/main/resources/generator-config-member.xml</configurationFile>
-<!--                    <configurationFile>src/main/resources/generator-config-business.xml</configurationFile>-->
+<!--                    手动更改-->
+<!--                    <configurationFile>src/main/resources/generator-config-member.xml</configurationFile>-->
+                    <configurationFile>src/main/resources/generator-config-business.xml</configurationFile>
                     <!--<configurationFile>src/main/resources/generator-config-batch.xml</configurationFile>-->
                     <overwrite>true</overwrite>
                     <verbose>true</verbose>
