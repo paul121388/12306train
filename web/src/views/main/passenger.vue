@@ -14,6 +14,12 @@
       <template #bodyCell="{column, record}">
         <template v-if="column.dataIndex === 'operation'">
           <a-space>
+            <a-popconfirm
+                title="删除后不可恢复，确认删除?"
+                @confirm="onDelete(record)"
+                ok-text="确认" cancel-text="取消">
+              <a style="color: red">删除</a>
+            </a-popconfirm>
             <a @click="onEdit(record)">编辑</a>
           </a-space>
         </template>
@@ -54,9 +60,9 @@
               v-model:value="passenger.type"
               style="width: 120px"
           >
-            <a-select-option value="1">成人</a-select-option>
-            <a-select-option value="2">儿童</a-select-option>
-            <a-select-option value="3">学生</a-select-option>
+            <a-select-option v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key" :value="item.value">
+              {{item.value}}
+            </a-select-option>
           </a-select>
         </a-form-item>
 
@@ -75,6 +81,7 @@ export default defineComponent({
   name: "passenger-view",
   setup() {
     const open = ref(false);
+    const PASSENGER_TYPE_ARRAY = [{key: "1", value: "成人"}, {key: "2", value: "儿童"}, {key: "3", value: "学生"}];
     const pagination = ref({
       total: 0,
       current: 1,
@@ -122,6 +129,22 @@ export default defineComponent({
       passenger.value = window.Tool.copy(record);
       open.value = true;
     };
+
+    const onDelete = (record) => {
+      axios.delete("/member/passenger/delete/" + record.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          notification.success({description: "删除成功！"});
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
+
 
     const handleOk = e => {
       axios.post('/member/passenger/save', passenger.value).then(response => {
@@ -190,6 +213,8 @@ export default defineComponent({
       handleQuery,
       loading,
       onEdit,
+      onDelete,
+      PASSENGER_TYPE_ARRAY
     };
   }
 });
