@@ -98,4 +98,6 @@ public class PassengerQueryResp {
         sb.append("]");
         return sb.toString();
     }
+
+
 }

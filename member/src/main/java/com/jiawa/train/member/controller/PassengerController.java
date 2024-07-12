@@ -52,5 +52,10 @@ public class PassengerController<memberLoginReq> {
         return new CommonResp<>(passengerQueryRespPageResp);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public CommonResp delete(@PathVariable Long id) {
+        passengerService.delete(id);
+        return new CommonResp();
+    }
 
 }
