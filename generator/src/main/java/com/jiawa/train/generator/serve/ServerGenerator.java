@@ -22,10 +22,10 @@ public class ServerGenerator {
     static String pomPath = "generator/pom.xml";
     static String module = "";
     // 测试代码
-    static String toPath = "generator/src/main/java/com/jiawa/train/generator/test/";
+    /*static String toPath = "generator/src/main/java/com/jiawa/train/generator/test/";
     static {
         new File(toPath).mkdirs();
-    }
+    }*/
     // 测试代码
 
     public static void main(String[] args) throws Exception {
@@ -45,7 +45,7 @@ public class ServerGenerator {
         new File(serverPath).mkdirs();
         System.out.println("servicePath: " + serverPath);*/
 
-        /*// 读取table节点
+        // 读取table节点
         Document document = new SAXReader().read("generator/" + generatorPath);
         Node table = document.selectSingleNode("//table");
         System.out.println(table);
@@ -53,7 +53,7 @@ public class ServerGenerator {
         Node domainObjectName = table.selectSingleNode("@domainObjectName");
         System.out.println(tableName.getText() + "/" + domainObjectName.getText());
 
-        // 为DbUtil设置数据源
+        /*// 为DbUtil设置数据源
         Node connectionURL = document.selectSingleNode("//@connectionURL");
         Node userId = document.selectSingleNode("//@userId");
         Node password = document.selectSingleNode("//@password");
