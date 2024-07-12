@@ -88,7 +88,7 @@ export default defineComponent({
   name: "passenger-view",
   setup() {
     const open = ref(false);
-    const PASSENGER_TYPE_ARRAY = [{key: "1", value: "成人"}, {key: "2", value: "儿童"}, {key: "3", value: "学生"}];
+    const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE;
     const pagination = ref({
       total: 0,
       current: 1,
