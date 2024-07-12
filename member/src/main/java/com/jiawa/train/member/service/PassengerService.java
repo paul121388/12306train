@@ -29,7 +29,7 @@ public class PassengerService {
     private PassengerMapper passengerMapper;
 
     /**
-     * 乘客保存
+     * 1.新增乘客  2.修改乘客
      * @param req
      */
     public void save(PassengerSaveReq req){
