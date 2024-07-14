@@ -1,8 +1,7 @@
 package com.jiawa.train.generator.serve;
 
-/*import com.jiawa.train.generator.util.DbUtil;
-import com.jiawa.train.generator.util.Field;*/
-
+import com.jiawa.train.generator.util.DbUtil;
+import com.jiawa.train.generator.util.Field;
 import com.jiawa.train.generator.util.FreemarkerUtil;
 import freemarker.template.TemplateException;
 import org.dom4j.Document;
@@ -12,8 +11,7 @@ import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ServerGenerator {
     static boolean readOnly = false;
@@ -54,7 +52,7 @@ public class ServerGenerator {
         System.out.println(tableName.getText() + "/" + domainObjectName.getText());
 
         // 为DbUtil设置数据源
-        /*Node connectionURL = document.selectSingleNode("//@connectionURL");
+        Node connectionURL = document.selectSingleNode("//@connectionURL");
         Node userId = document.selectSingleNode("//@userId");
         Node password = document.selectSingleNode("//@password");
         System.out.println("url: " + connectionURL.getText());
@@ -62,7 +60,7 @@ public class ServerGenerator {
         System.out.println("password: " + password.getText());
         DbUtil.url = connectionURL.getText();
         DbUtil.user = userId.getText();
-        DbUtil.password = password.getText();*/
+        DbUtil.password = password.getText();
 
         // 示例：表名 jiawa_test
         // Domain = JiawaTest 实体类的类名
@@ -72,9 +70,9 @@ public class ServerGenerator {
         // do_main = jiawa-test url的路径
         String do_main = tableName.getText().replaceAll("_", "-");
         // 表中文名
-       /* String tableNameCn = DbUtil.getTableComment(tableName.getText());
+        String tableNameCn = DbUtil.getTableComment(tableName.getText());
         List<Field> fieldList = DbUtil.getColumnByTableName(tableName.getText());
-        Set<String> typeSet = getJavaTypes(fieldList);*/
+        Set<String> typeSet = getJavaTypes(fieldList);
 
         // 组装参数
         Map<String, Object> param = new HashMap<>();
@@ -82,15 +80,15 @@ public class ServerGenerator {
         param.put("Domain", Domain);
         param.put("domain", domain);
         param.put("do_main", do_main);
-        /*param.put("tableNameCn", tableNameCn);
+        param.put("tableNameCn", tableNameCn);
         param.put("fieldList", fieldList);
         param.put("typeSet", typeSet);
-        param.put("readOnly", readOnly);*/
+//        param.put("readOnly", readOnly);
         System.out.println("组装参数：" + param);
 
-        gen(Domain, param, "service", "service");
-        gen(Domain, param, "controller", "controller");
-//        gen(Domain, param, "req", "saveReq");
+//        gen(Domain, param, "service", "service");
+//        gen(Domain, param, "controller", "controller");
+        gen(Domain, param, "req", "saveReq");
 //        gen(Domain, param, "req", "queryReq");
 //        gen(Domain, param, "resp", "queryResp");
 
@@ -134,12 +132,12 @@ public class ServerGenerator {
     /**
      * 获取所有的Java类型，使用Set去重
      */
-    /*private static Set<String> getJavaTypes(List<Field> fieldList) {
+    private static Set<String> getJavaTypes(List<Field> fieldList) {
         Set<String> set = new HashSet<>();
         for (int i = 0; i < fieldList.size(); i++) {
             Field field = fieldList.get(i);
             set.add(field.getJavaType());
         }
         return set;
-    }*/
+    }
 }
