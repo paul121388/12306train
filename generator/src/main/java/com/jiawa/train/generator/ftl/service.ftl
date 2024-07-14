@@ -1,4 +1,4 @@
-package com.jiawa.train.member.service;
+package com.jiawa.train.${module}.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
@@ -6,12 +6,12 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.context.LoginMemberContext;
-import com.jiawa.train.member.domain.${Domain};
-import com.jiawa.train.member.domain.${Domain}Example;
-import com.jiawa.train.member.mapper.${Domain}Mapper;
-import com.jiawa.train.member.req.${Domain}QueryReq;
-import com.jiawa.train.member.req.${Domain}SaveReq;
-import com.jiawa.train.member.resp.${Domain}QueryResp;
+import com.jiawa.train.${module}.domain.${Domain};
+import com.jiawa.train.${module}.domain.${Domain}Example;
+import com.jiawa.train.${module}.mapper.${Domain}Mapper;
+import com.jiawa.train.${module}.req.${Domain}QueryReq;
+import com.jiawa.train.${module}.req.${Domain}SaveReq;
+import com.jiawa.train.${module}.resp.${Domain}QueryResp;
 import com.jiawa.train.resp.PageResp;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -49,7 +49,7 @@ public class ${Domain}Service {
     }
 
     /**
-     * 乘客查询 1.控制端查询所有乘客  2.member查询当前乘客
+     * 乘客查询 1.控制端查询所有乘客  2.${module}查询当前乘客
      * @param req
      */
     public PageResp<${Domain}QueryResp> queryList(${Domain}QueryReq req){
@@ -59,7 +59,7 @@ public class ${Domain}Service {
         ${Domain}Example.Criteria criteria = ${domain}Example.createCriteria();
 
         if(ObjectUtil.isNotNull(LoginMemberContext.getMemberId())){
-            // 为了让后续控制台调用方法时，没有会员ID（因为不是会员登录）也能使用这个方法，这里的memberID应该在controller赋值
+            // 为了让后续控制台调用方法时，没有会员ID（因为不是会员登录）也能使用这个方法，这里的${module}ID应该在controller赋值
 //            criteria.andMemberIdEqualTo(LoginMemberContext.getMemberId());
             criteria.andMemberIdEqualTo(req.getMemberId());
         }

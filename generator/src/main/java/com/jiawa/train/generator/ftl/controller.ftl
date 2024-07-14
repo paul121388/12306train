@@ -1,10 +1,10 @@
-package com.jiawa.train.member.controller;
+package com.jiawa.train.${module}.controller;
 
 import com.jiawa.train.context.LoginMemberContext;
-import com.jiawa.train.member.req.${Domain}QueryReq;
-import com.jiawa.train.member.req.${Domain}SaveReq;
-import com.jiawa.train.member.resp.${Domain}QueryResp;
-import com.jiawa.train.member.service.${Domain}Service;
+import com.jiawa.train.${module}.req.${Domain}QueryReq;
+import com.jiawa.train.${module}.req.${Domain}SaveReq;
+import com.jiawa.train.${module}.resp.${Domain}QueryResp;
+import com.jiawa.train.${module}.service.${Domain}Service;
 import com.jiawa.train.resp.CommonResp;
 import com.jiawa.train.resp.PageResp;
 import jakarta.annotation.Resource;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/${do_main}")
-public class ${Domain}Controller<memberLoginReq> {
+public class ${Domain}Controller<${module}LoginReq> {
     @Resource
     private ${Domain}Service ${domain}Service;
 
@@ -31,12 +31,12 @@ public class ${Domain}Controller<memberLoginReq> {
 
     /**
      * 保存
-     * @param memberRegisterReq
+     * @param ${module}RegisterReq
      * @return
      */
     @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody ${Domain}SaveReq memberRegisterReq) {
-        ${domain}Service.save(memberRegisterReq);
+    public CommonResp<Object> save(@Valid @RequestBody ${Domain}SaveReq ${module}RegisterReq) {
+        ${domain}Service.save(${module}RegisterReq);
         return new CommonResp<>();
     }
 
