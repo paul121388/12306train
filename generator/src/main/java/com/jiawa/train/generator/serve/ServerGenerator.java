@@ -15,7 +15,7 @@ import java.util.*;
 
 public class ServerGenerator {
     static boolean readOnly = false;
-    static String vuePath = "admin/src/views/main/";
+    static String vuePath = "web/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/jiawa/train/[module]/";
     static String pomPath = "generator/pom.xml";
     static String module = "";
@@ -89,10 +89,10 @@ public class ServerGenerator {
 //        gen(Domain, param, "service", "service");
 //        gen(Domain, param, "controller", "controller");
 //        gen(Domain, param, "req", "saveReq");
-        gen(Domain, param, "req", "queryReq");
-        gen(Domain, param, "resp", "queryResp");
+//        gen(Domain, param, "req", "queryReq");
+//        gen(Domain, param, "resp", "queryResp");
 
-//        genVue(do_main, param);
+        genVue(do_main, param);
     }
 
     private static void gen(String Domain, Map<String, Object> param, String packageName, String target) throws IOException, TemplateException {
@@ -105,13 +105,13 @@ public class ServerGenerator {
         FreemarkerUtil.generator(fileName, param);
     }
 
-    /*private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
+    private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
         FreemarkerUtil.initConfig("vue.ftl");
         new File(vuePath + module).mkdirs();
         String fileName = vuePath + module + "/" + do_main + ".vue";
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
-    }*/
+    }
 
     /**
      * 获取generator-config.xml的配置文件路径
