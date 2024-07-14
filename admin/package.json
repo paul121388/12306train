@@ -1,5 +1,5 @@
 {
-  "name": "admin",
+  "name": "the-admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -41,7 +41,8 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "no-undef": "off"
+      "no-undef": "off",
+      "vue/multi-word-component-names": 0
     }
   },
   "browserslist": [
