@@ -47,7 +47,6 @@ public class ${Domain}Controller<${module}LoginReq> {
      */
     @GetMapping("/query-list")
     public CommonResp<PageResp<${Domain}QueryResp>> queryList(@Valid ${Domain}QueryReq req) {
-        req.setMemberId(LoginMemberContext.getMemberId());
         PageResp<${Domain}QueryResp> ${domain}QueryRespPageResp = ${domain}Service.queryList(req);
         return new CommonResp<>(${domain}QueryRespPageResp);
     }

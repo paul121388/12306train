@@ -5,7 +5,6 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.context.LoginMemberContext;
 import com.jiawa.train.${module}.domain.${Domain};
 import com.jiawa.train.${module}.domain.${Domain}Example;
 import com.jiawa.train.${module}.mapper.${Domain}Mapper;
@@ -36,7 +35,6 @@ public class ${Domain}Service {
         DateTime now = DateTime.now();
         ${Domain} ${domain} = BeanUtil.copyProperties(req, ${Domain}.class);
         if (ObjectUtil.isNull(${domain}.getId())) {
-            ${domain}.setMemberId(LoginMemberContext.getMemberId());
             ${domain}.setId(SnowUtil.getSnowflakeNextId());
             ${domain}.setCreateTime(now);
             ${domain}.setUpdateTime(now);
@@ -58,11 +56,7 @@ public class ${Domain}Service {
         ${domain}Example.setOrderByClause("id desc");
         ${Domain}Example.Criteria criteria = ${domain}Example.createCriteria();
 
-        if(ObjectUtil.isNotNull(LoginMemberContext.getMemberId())){
-            // 为了让后续控制台调用方法时，没有会员ID（因为不是会员登录）也能使用这个方法，这里的${module}ID应该在controller赋值
-//            criteria.andMemberIdEqualTo(LoginMemberContext.getMemberId());
-            criteria.andMemberIdEqualTo(req.getMemberId());
-        }
+
         // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
         LOG.info("页数：{}", req.getPage());
         LOG.info("每页大小：{}", req.getSize());
