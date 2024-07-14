@@ -83,7 +83,7 @@ public class ServerGenerator {
         param.put("tableNameCn", tableNameCn);
         param.put("fieldList", fieldList);
         param.put("typeSet", typeSet);
-//        param.put("readOnly", readOnly);
+        param.put("readOnly", readOnly);
         System.out.println("组装参数：" + param);
 
 //        gen(Domain, param, "service", "service");
@@ -108,7 +108,7 @@ public class ServerGenerator {
     private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
         FreemarkerUtil.initConfig("vue.ftl");
         new File(vuePath + module).mkdirs();
-        String fileName = vuePath + module + "/" + do_main + ".vue";
+        String fileName = vuePath + "/" + do_main + ".vue";
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
     }
