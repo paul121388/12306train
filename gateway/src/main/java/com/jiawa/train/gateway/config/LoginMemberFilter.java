@@ -23,6 +23,7 @@ public class LoginMemberFilter implements GlobalFilter {
         String path = exchange.getRequest().getURI().getPath();
 
         if (path.contains("/admin")
+                || path.contains("/business")
                 || path.contains("/member/member/hello")
                 || path.contains("/member/member/login")
                 || path.contains("/member/member/send-code")) {
