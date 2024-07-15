@@ -1,6 +1,5 @@
-package com.jiawa.train.${module}.controller;
+package com.jiawa.train.${module}.controller.admin;
 
-import com.jiawa.train.context.LoginMemberContext;
 import com.jiawa.train.${module}.req.${Domain}QueryReq;
 import com.jiawa.train.${module}.req.${Domain}SaveReq;
 import com.jiawa.train.${module}.resp.${Domain}QueryResp;
@@ -12,8 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/${do_main}")
-public class ${Domain}Controller<${module}LoginReq> {
+@RequestMapping("/admin/${do_main}")
+public class ${Domain}AdminController<${module}LoginReq> {
     @Resource
     private ${Domain}Service ${domain}Service;
 

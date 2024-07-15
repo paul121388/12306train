@@ -1,9 +1,9 @@
 package com.jiawa.train.business.controller.admin;
 
-import com.jiawa.train.business.req.StationQueryReq;
-import com.jiawa.train.business.req.StationSaveReq;
-import com.jiawa.train.business.resp.StationQueryResp;
-import com.jiawa.train.business.service.StationService;
+import com.jiawa.train.business.req.TrainStationQueryReq;
+import com.jiawa.train.business.req.TrainStationSaveReq;
+import com.jiawa.train.business.resp.TrainStationQueryResp;
+import com.jiawa.train.business.service.TrainStationService;
 import com.jiawa.train.resp.CommonResp;
 import com.jiawa.train.resp.PageResp;
 import jakarta.annotation.Resource;
@@ -11,10 +11,10 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/station")
-public class AdminStationController<businessLoginReq> {
+@RequestMapping("/admin/train-station")
+public class TrainStationAdminController<businessLoginReq> {
     @Resource
-    private StationService stationService;
+    private TrainStationService trainStationService;
 
     /**
      * 测试
@@ -34,8 +34,8 @@ public class AdminStationController<businessLoginReq> {
      * @return
      */
     @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody StationSaveReq businessRegisterReq) {
-        stationService.save(businessRegisterReq);
+    public CommonResp<Object> save(@Valid @RequestBody TrainStationSaveReq businessRegisterReq) {
+        trainStationService.save(businessRegisterReq);
         return new CommonResp<>();
     }
 
@@ -45,14 +45,14 @@ public class AdminStationController<businessLoginReq> {
      * @return
      */
     @GetMapping("/query-list")
-    public CommonResp<PageResp<StationQueryResp>> queryList(@Valid StationQueryReq req) {
-        PageResp<StationQueryResp> stationQueryRespPageResp = stationService.queryList(req);
-        return new CommonResp<>(stationQueryRespPageResp);
+    public CommonResp<PageResp<TrainStationQueryResp>> queryList(@Valid TrainStationQueryReq req) {
+        PageResp<TrainStationQueryResp> trainStationQueryRespPageResp = trainStationService.queryList(req);
+        return new CommonResp<>(trainStationQueryRespPageResp);
     }
 
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
-        stationService.delete(id);
+        trainStationService.delete(id);
         return new CommonResp();
     }
 

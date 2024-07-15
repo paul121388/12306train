@@ -1,4 +1,4 @@
-package com.jiawa.train.business.controller;
+package com.jiawa.train.business.controller.admin;
 
 import com.jiawa.train.business.req.TrainQueryReq;
 import com.jiawa.train.business.req.TrainSaveReq;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/train")
-public class TrainController<businessLoginReq> {
+public class TrainAdminController<businessLoginReq> {
     @Resource
     private TrainService trainService;
 
