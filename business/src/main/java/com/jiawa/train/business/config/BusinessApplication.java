@@ -11,7 +11,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.jiawa"})
-@MapperScan("com.jiawa.train.member.mapper")
+@MapperScan("com.jiawa.train.business.mapper")
 public class BusinessApplication {
     private static final Logger LOG = LoggerFactory.getLogger(BusinessApplication.class);
 
