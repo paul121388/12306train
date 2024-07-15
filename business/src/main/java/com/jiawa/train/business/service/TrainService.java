@@ -28,7 +28,7 @@ public class TrainService {
     private TrainMapper trainMapper;
 
     /**
-     * 1.新增乘客  2.修改乘客
+     * 1.新增列车  2.修改列车
      * @param req
      */
     public void save(TrainSaveReq req){
@@ -47,7 +47,7 @@ public class TrainService {
     }
 
     /**
-     * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     * 乘客查询 1.控制端查询所有列车  2.business查询当前列车
      * @param req
      */
     public PageResp<TrainQueryResp> queryList(TrainQueryReq req){
@@ -77,10 +77,26 @@ public class TrainService {
     }
 
     /**
-     * 乘客删除
+     * 列车删除
      * @param id
      */
     public void delete(Long id){
         trainMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 查询所有列车
+     * @param
+     * @return
+     */
+    public List<TrainQueryResp> queryAll(){
+        TrainExample trainExample = new TrainExample();
+
+        trainExample.setOrderByClause("code desc");
+        TrainExample.Criteria criteria = trainExample.createCriteria();
+
+        List<Train> trainList = trainMapper.selectByExample(trainExample);
+
+        return BeanUtil.copyToList(trainList, TrainQueryResp.class);
     }
 }
