@@ -16,23 +16,23 @@ const routes = [
             },
             {
                 path: 'station',
-                component: () => import('../views/main/station.vue'),
+                component: () => import('../views/main/business/station.vue'),
             },
             {
                 path: 'train',
-                component: () => import('../views/main/train.vue'),
+                component: () => import('../views/main/business/train.vue'),
             },
             {
                 path: 'train-station',
-                component: () => import('../views/main/train-station.vue'),
+                component: () => import('../views/main/business/train-station.vue'),
             },
             {
                 path: 'train-carriage',
-                component: () => import('../views/main/train-carriage.vue'),
+                component: () => import('../views/main/business/train-carriage.vue'),
             },
             {
                 path: 'train-seat',
-                component: () => import('../views/main/train-seat.vue'),
+                component: () => import('../views/main/business/train-seat.vue'),
             }
 
 
