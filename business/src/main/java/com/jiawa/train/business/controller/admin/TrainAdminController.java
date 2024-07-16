@@ -42,7 +42,7 @@ public class TrainAdminController<businessLoginReq> {
     }
 
     /**
-     * 查询乘客列表
+     * 查询火车列表
      * @param req
      * @return
      */
@@ -52,12 +52,21 @@ public class TrainAdminController<businessLoginReq> {
         return new CommonResp<>(trainQueryRespPageResp);
     }
 
+    /**
+     * 根据id删除火车
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         trainService.delete(id);
         return new CommonResp();
     }
 
+    /**
+     * 查询所有火车
+     * @return
+     */
     @GetMapping("/query-all")
     public CommonResp<List<TrainQueryResp>> queryAll() {
         List<TrainQueryResp> trainQueryResps = trainService.queryAll();

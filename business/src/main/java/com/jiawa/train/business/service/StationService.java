@@ -28,7 +28,7 @@ public class StationService {
     private StationMapper stationMapper;
 
     /**
-     * 1.新增乘客  2.修改乘客
+     * 1.新增车站  2.修改车站
      * @param req
      */
     public void save(StationSaveReq req){
@@ -47,7 +47,7 @@ public class StationService {
     }
 
     /**
-     * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     * 车站查询 1.控制端查询所有车站  2.business查询当前车站
      * @param req
      */
     public PageResp<StationQueryResp> queryList(StationQueryReq req){
@@ -77,10 +77,26 @@ public class StationService {
     }
 
     /**
-     * 乘客删除
+     * 车站删除
      * @param id
      */
     public void delete(Long id){
         stationMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 查询所有车站
+     * @param
+     * @return
+     */
+    public List<StationQueryResp> queryAll(){
+        StationExample stationExample = new StationExample();
+
+        stationExample.setOrderByClause("id asc");
+        stationExample.createCriteria();
+
+        List<Station> stations = stationMapper.selectByExample(stationExample);
+
+        return BeanUtil.copyToList(stations, StationQueryResp.class);
     }
 }

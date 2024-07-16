@@ -10,6 +10,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/station")
 public class StationAdminController<businessLoginReq> {
@@ -40,7 +42,7 @@ public class StationAdminController<businessLoginReq> {
     }
 
     /**
-     * 查询乘客列表
+     * 查询车站列表
      * @param req
      * @return
      */
@@ -50,10 +52,25 @@ public class StationAdminController<businessLoginReq> {
         return new CommonResp<>(stationQueryRespPageResp);
     }
 
+    /**
+     * 删除车站
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         stationService.delete(id);
         return new CommonResp();
+    }
+
+    /**
+     * 查询所有车站
+     * @return
+     */
+    @GetMapping("/query-all")
+    public CommonResp<List<StationQueryResp>> queryAll() {
+        List<StationQueryResp> stationQueryResps = stationService.queryAll();
+        return new CommonResp<List<StationQueryResp>>(stationQueryResps);
     }
 
 }
