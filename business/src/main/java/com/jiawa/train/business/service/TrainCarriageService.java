@@ -29,9 +29,10 @@ public class TrainCarriageService {
 
     /**
      * 1.新增乘客  2.修改乘客
+     *
      * @param req
      */
-    public void save(TrainCarriageSaveReq req){
+    public void save(TrainCarriageSaveReq req) {
         DateTime now = DateTime.now();
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if (ObjectUtil.isNull(trainCarriage.getId())) {
@@ -48,9 +49,10 @@ public class TrainCarriageService {
 
     /**
      * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     *
      * @param req
      */
-    public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req){
+    public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
 
         trainCarriageExample.setOrderByClause("id desc");
@@ -78,9 +80,22 @@ public class TrainCarriageService {
 
     /**
      * 乘客删除
+     *
      * @param id
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         trainCarriageMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 根据列车code，查询列车所属的所有车厢
+     * @param trainCode
+     * @return
+     */
+    public List<TrainCarriage> selectByTrainCode(String trainCode) {
+        TrainCarriageExample example = new TrainCarriageExample();
+        example.createCriteria().andTrainCodeEqualTo(trainCode);
+        example.setOrderByClause("id desc");
+        return trainCarriageMapper.selectByExample(example);
     }
 }

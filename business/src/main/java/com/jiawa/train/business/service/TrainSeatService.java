@@ -3,10 +3,13 @@ package com.jiawa.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jiawa.train.business.domain.TrainCarriage;
 import com.jiawa.train.business.domain.TrainSeat;
 import com.jiawa.train.business.domain.TrainSeatExample;
+import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.mapper.TrainSeatMapper;
 import com.jiawa.train.business.req.TrainSeatQueryReq;
 import com.jiawa.train.business.req.TrainSeatSaveReq;
@@ -27,11 +30,15 @@ public class TrainSeatService {
     @Resource
     private TrainSeatMapper trainSeatMapper;
 
+    @Resource
+    private TrainCarriageService trainCarriageService;
+
     /**
-     * 1.新增乘客  2.修改乘客
+     * 1.新增座位  2.修改座位
+     *
      * @param req
      */
-    public void save(TrainSeatSaveReq req){
+    public void save(TrainSeatSaveReq req) {
         DateTime now = DateTime.now();
         TrainSeat trainSeat = BeanUtil.copyProperties(req, TrainSeat.class);
         if (ObjectUtil.isNull(trainSeat.getId())) {
@@ -47,13 +54,14 @@ public class TrainSeatService {
     }
 
     /**
-     * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     * 座位查询 1.控制端查询所有座位  2.business查询当前座位
+     *
      * @param req
      */
-    public PageResp<TrainSeatQueryResp> queryList(TrainSeatQueryReq req){
+    public PageResp<TrainSeatQueryResp> queryList(TrainSeatQueryReq req) {
         TrainSeatExample trainSeatExample = new TrainSeatExample();
 
-        trainSeatExample.setOrderByClause("id desc");
+        trainSeatExample.setOrderByClause("id asc");
         TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
 
 
@@ -77,10 +85,58 @@ public class TrainSeatService {
     }
 
     /**
-     * 乘客删除
+     * 座位删除
+     *
      * @param id
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         trainSeatMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 生成当前火车座位
+     *
+     * @param trainCode
+     */
+    public void genTrainSeat(String trainCode) {
+        DateTime now = DateTime.now();
+        // 清空当前车次下的所有座位记录
+        TrainSeatExample trainSeatExample = new TrainSeatExample();
+        TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        trainSeatMapper.deleteByExample(trainSeatExample);
+
+        // 查找当前车次下的所有车厢
+        List<TrainCarriage> trainCarriages = trainCarriageService.selectByTrainCode(trainCode);
+
+        // 循环生成每个车厢的座位
+        for (TrainCarriage trainCarriage : trainCarriages) {
+            // 拿到车厢的数据：行数，座位类型（根据座位类型得到列数）
+            Integer rowCount = trainCarriage.getRowCount();
+            String seatType = trainCarriage.getSeatType();
+            int seatIndex = 1;
+
+            // 根据车厢的座位类型，筛选出所有的列，比如车厢类型是一等座，那么列数就是4
+            List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(seatType);
+            // 循环行数
+            for (int row = 1; row <= rowCount; row++) {
+                // 循环列数
+                for (SeatColEnum col : colEnumList) {
+                    // 构造座位数据并保存数据库
+                    TrainSeat trainSeat = new TrainSeat();
+                    trainSeat.setId(SnowUtil.getSnowflakeNextId());
+                    trainSeat.setTrainCode(trainCode);
+                    trainSeat.setCarriageIndex(trainCarriage.getIndex());
+                    trainSeat.setRow(StrUtil.fillBefore(String.valueOf(row), '0', 2));
+                    trainSeat.setCol(col.getCode());
+                    trainSeat.setSeatType(seatType);
+                    trainSeat.setCarriageSeatIndex(seatIndex++);
+                    trainSeat.setCreateTime(now);
+                    trainSeat.setUpdateTime(now);
+
+                    trainSeatMapper.insert(trainSeat);
+                }
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.jiawa.train.business.controller.admin;
 import com.jiawa.train.business.req.TrainQueryReq;
 import com.jiawa.train.business.req.TrainSaveReq;
 import com.jiawa.train.business.resp.TrainQueryResp;
+import com.jiawa.train.business.service.TrainSeatService;
 import com.jiawa.train.business.service.TrainService;
 import com.jiawa.train.resp.CommonResp;
 import com.jiawa.train.resp.PageResp;
@@ -17,6 +18,9 @@ import java.util.List;
 public class TrainAdminController<businessLoginReq> {
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private TrainSeatService trainSeatService;
 
     /**
      * 测试
@@ -71,6 +75,17 @@ public class TrainAdminController<businessLoginReq> {
     public CommonResp<List<TrainQueryResp>> queryAll() {
         List<TrainQueryResp> trainQueryResps = trainService.queryAll();
         return new CommonResp<>(trainQueryResps);
+    }
+
+    /**
+     * 根据火车的code，生成座位
+     * @param TrainCode
+     * @return
+     */
+    @GetMapping("/gen-seat/{TrainCode}")
+    public CommonResp genSeat(@PathVariable String TrainCode) {
+        trainSeatService.genTrainSeat(TrainCode);
+        return new CommonResp();
     }
 
 }
