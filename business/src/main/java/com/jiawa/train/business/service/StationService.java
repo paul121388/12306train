@@ -40,10 +40,8 @@ public class StationService {
         if (ObjectUtil.isNull(station.getId())) {
 
             // 保存前，校验名字是否存在
-            StationExample stationExample = new StationExample();
-            StationExample.Criteria criteria = stationExample.createCriteria().andNameEqualTo(req.getName());
-            List<Station> stationList = stationMapper.selectByExample(stationExample);
-            if (CollUtil.isNotEmpty(stationList)) {
+            Station stationDB = selectByUnique(req.getName());
+            if (ObjectUtil.isNotEmpty(stationDB)) {
                 throw new BusinessException(BusinessExceptionEnum.BUSSINESS_STATION_NAME_UNIQUE_ERROR);
             }
 
@@ -55,6 +53,18 @@ public class StationService {
             station.setUpdateTime(now);
             station.setCreateTime(req.getCreateTime());
             stationMapper.updateByPrimaryKey(station);
+        }
+    }
+
+    private Station selectByUnique(String name) {
+        StationExample stationExample = new StationExample();
+        StationExample.Criteria criteria = stationExample.createCriteria().andNameEqualTo(name);
+        List<Station> stationList = stationMapper.selectByExample(stationExample);
+        if(CollUtil.isNotEmpty(stationList)){
+            return stationList.get(0);
+        }
+        else{
+            return null;
         }
     }
 
