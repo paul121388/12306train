@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.TrainCarriage;
 import com.jiawa.train.business.domain.TrainCarriageExample;
+import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.mapper.TrainCarriageMapper;
 import com.jiawa.train.business.req.TrainCarriageQueryReq;
 import com.jiawa.train.business.req.TrainCarriageSaveReq;
@@ -34,6 +35,13 @@ public class TrainCarriageService {
      */
     public void save(TrainCarriageSaveReq req) {
         DateTime now = DateTime.now();
+
+        // 根据座位类型获取列数，自动计算座位数总和
+        String seatType = req.getSeatType();
+        List<SeatColEnum> colsByType = SeatColEnum.getColsByType(seatType);
+        req.setSeatCount(colsByType.size() * req.getRowCount());
+        req.setColCount(colsByType.size());
+
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if (ObjectUtil.isNull(trainCarriage.getId())) {
             trainCarriage.setId(SnowUtil.getSnowflakeNextId());
