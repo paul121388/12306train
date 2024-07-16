@@ -28,7 +28,7 @@ public class TrainCarriageService {
     private TrainCarriageMapper trainCarriageMapper;
 
     /**
-     * 1.新增乘客  2.修改乘客
+     * 1.新增车厢  2.修改车厢
      *
      * @param req
      */
@@ -48,7 +48,7 @@ public class TrainCarriageService {
     }
 
     /**
-     * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     * 车厢查询 1.控制端查询所有车厢  2.business查询当前车厢
      *
      * @param req
      */
@@ -79,7 +79,7 @@ public class TrainCarriageService {
     }
 
     /**
-     * 乘客删除
+     * 车厢删除
      *
      * @param id
      */
