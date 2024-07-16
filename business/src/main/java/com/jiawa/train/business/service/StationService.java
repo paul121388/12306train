@@ -1,6 +1,7 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
@@ -11,6 +12,8 @@ import com.jiawa.train.business.mapper.StationMapper;
 import com.jiawa.train.business.req.StationQueryReq;
 import com.jiawa.train.business.req.StationSaveReq;
 import com.jiawa.train.business.resp.StationQueryResp;
+import com.jiawa.train.exception.BusinessException;
+import com.jiawa.train.exception.BusinessExceptionEnum;
 import com.jiawa.train.resp.PageResp;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -35,6 +38,15 @@ public class StationService {
         DateTime now = DateTime.now();
         Station station = BeanUtil.copyProperties(req, Station.class);
         if (ObjectUtil.isNull(station.getId())) {
+
+            // 保存前，校验名字是否存在
+            StationExample stationExample = new StationExample();
+            StationExample.Criteria criteria = stationExample.createCriteria().andNameEqualTo(req.getName());
+            List<Station> stationList = stationMapper.selectByExample(stationExample);
+            if (CollUtil.isNotEmpty(stationList)) {
+                throw new BusinessException(BusinessExceptionEnum.BUSSINESS_STATION_NAME_UNIQUE_ERROR);
+            }
+
             station.setId(SnowUtil.getSnowflakeNextId());
             station.setCreateTime(now);
             station.setUpdateTime(now);
