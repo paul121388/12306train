@@ -64,6 +64,9 @@ public class TrainSeatService {
         trainSeatExample.setOrderByClause("carriage_index, id asc");
         TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
 
+        if(StrUtil.isNotBlank(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
         LOG.info("页数：{}", req.getPage());
@@ -104,16 +107,18 @@ public class TrainSeatService {
         TrainSeatExample trainSeatExample = new TrainSeatExample();
         TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
         criteria.andTrainCodeEqualTo(trainCode);
+        LOG.info("车次：{}，删除座位记录", trainCode);
         trainSeatMapper.deleteByExample(trainSeatExample);
 
         // 查找当前车次下的所有车厢
         List<TrainCarriage> trainCarriages = trainCarriageService.selectByTrainCode(trainCode);
-
+        LOG.info("车次：{}，车厢数量：{}", trainCode, trainCarriages.size());
         // 循环生成每个车厢的座位
         for (TrainCarriage trainCarriage : trainCarriages) {
             // 拿到车厢的数据：行数，座位类型（根据座位类型得到列数）
             Integer rowCount = trainCarriage.getRowCount();
             String seatType = trainCarriage.getSeatType();
+            LOG.info("车厢：{}，座位类型：{}, 行数：{}", trainCarriage.getIndex(), seatType, rowCount);
             int seatIndex = 1;
 
             // 根据车厢的座位类型，筛选出所有的列，比如车厢类型是一等座，那么列数就是4
@@ -134,6 +139,8 @@ public class TrainSeatService {
                     trainSeat.setCreateTime(now);
                     trainSeat.setUpdateTime(now);
 
+                    LOG.info("生成座位数据车次：{}，车厢：{}, 行：{}, 列：{}, 座位类型：{}",
+                            trainCode, trainCarriage.getIndex(), row, col.getCode(),seatType);
                     trainSeatMapper.insert(trainSeat);
                 }
             }
