@@ -24,6 +24,7 @@ public class LoginMemberFilter implements GlobalFilter {
 
         if (path.contains("/admin")
                 || path.contains("/business")
+                || path.contains("/batch")
                 || path.contains("/member/member/hello")
                 || path.contains("/member/member/login")
                 || path.contains("/member/member/send-code")) {
