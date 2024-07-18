@@ -1,0 +1,28 @@
+GET http://localhost:8000/business/admin/train/gen-seat/G1
+Accept: application/json
+
+###
+
+GET http://localhost:8000/business/admin/train/gen-seat/G2
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8002/business/admin/daily-train/save
+Content-Type: application/json
+
+{
+  "code": "G1",
+  "createTime": 1721032944000,
+  "date": 1721232000000,
+  "end": "拉萨",
+  "endPinyin": "lasa",
+  "endTime": 29105000,
+  "start": "长沙南",
+  "startPinyin": "changshanan",
+  "startTime": -3294000,
+  "type": "G",
+  "updateTime": 1721103298000
+}
+
+
