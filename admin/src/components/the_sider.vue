@@ -27,7 +27,14 @@
             <user-outlined/> &nbsp; 每日火车管理
           </router-link>
         </a-menu-item>
+        <a-menu-item key="/business/daily-train-carriage">
+          <router-link to="/business/daily-train-carriage">
+            <user-outlined/> &nbsp; 每日火车车厢管理
+          </router-link>
+        </a-menu-item>
       </a-sub-menu>
+
+
 
       <a-sub-menu key="batch">
         <template #title>
