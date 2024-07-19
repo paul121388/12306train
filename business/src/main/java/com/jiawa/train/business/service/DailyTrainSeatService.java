@@ -3,6 +3,7 @@ package com.jiawa.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.DailyTrainSeat;
@@ -53,9 +54,12 @@ public class DailyTrainSeatService {
     public PageResp<DailyTrainSeatQueryResp> queryList(DailyTrainSeatQueryReq req){
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
 
-        dailyTrainSeatExample.setOrderByClause("id desc");
+        dailyTrainSeatExample.setOrderByClause("train_code asc, carriage_index asc, carriage_seat_index asc");
         DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
 
+        if(StrUtil.isNotBlank(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
         LOG.info("页数：{}", req.getPage());
