@@ -1,9 +1,9 @@
 <template>
   <p>
     <a-space>
-      <a-button type="primary" @click="handleQuery()">刷新</a-button>
-      <train-select-view v-model:value="params.trainCode"></train-select-view>
-      <a-button type="primary" @click="handleQuery()">查找</a-button>
+      <train-select-view v-model="params.localTrainCode"/>
+      <a-date-picker v-model:value="params.localDate" valueFormat="YYYY-MM-DD" placeholder="请选择日期"/>
+      <a-button type="primary" @click="handleQuery()">查询</a-button>
     </a-space>
   </p>
   <a-table :dataSource="dailyTrainSeats"
@@ -17,14 +17,14 @@
       <template v-else-if="column.dataIndex === 'col'">
         <span v-for="item in SEAT_COL_ARRAY" :key="item.code">
           <span v-if="item.code === record.col && item.type == record.seatType">
-            {{item.desc}}
+            {{ item.desc }}
           </span>
         </span>
       </template>
       <template v-else-if="column.dataIndex === 'seatType'">
         <span v-for="item in SEAT_TYPE_ARRAY" :key="item.code">
           <span v-if="item.code === record.seatType ">
-            {{item.desc}}
+            {{ item.desc }}
           </span>
         </span>
       </template>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import {defineComponent, ref, onMounted} from 'vue';
 import {notification} from "ant-design-vue";
 import axios from "axios";
 import TrainSelectView from "@/components/train-select";
@@ -41,7 +41,7 @@ import TrainSelectView from "@/components/train-select";
 export default defineComponent({
   name: "daily-train-seat-view",
   components: {TrainSelectView},
-  setup() {
+  setup: function () {
     const SEAT_COL_ARRAY = window.SEAT_COL_ARRAY;
     const SEAT_TYPE_ARRAY = window.SEAT_TYPE_ARRAY;
     const visible = ref(false);
@@ -67,49 +67,50 @@ export default defineComponent({
     });
     let loading = ref(false);
     let params = ref({
-      trainCode: null
+      localDate: null,
+      localTrainCode: null
     })
     const columns = [
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: '车次编号',
-      dataIndex: 'trainCode',
-      key: 'trainCode',
-    },
-    {
-      title: '箱序',
-      dataIndex: 'carriageIndex',
-      key: 'carriageIndex',
-    },
-    {
-      title: '排号',
-      dataIndex: 'row',
-      key: 'row',
-    },
-    {
-      title: '列号',
-      dataIndex: 'col',
-      key: 'col',
-    },
-    {
-      title: '座位类型',
-      dataIndex: 'seatType',
-      key: 'seatType',
-    },
-    {
-      title: '同车箱座序',
-      dataIndex: 'carriageSeatIndex',
-      key: 'carriageSeatIndex',
-    },
-    {
-      title: '售卖情况',
-      dataIndex: 'sell',
-      key: 'sell',
-    },
+      {
+        title: '日期',
+        dataIndex: 'date',
+        key: 'date',
+      },
+      {
+        title: '车次编号',
+        dataIndex: 'trainCode',
+        key: 'trainCode',
+      },
+      {
+        title: '箱序',
+        dataIndex: 'carriageIndex',
+        key: 'carriageIndex',
+      },
+      {
+        title: '排号',
+        dataIndex: 'row',
+        key: 'row',
+      },
+      {
+        title: '列号',
+        dataIndex: 'col',
+        key: 'col',
+      },
+      {
+        title: '座位类型',
+        dataIndex: 'seatType',
+        key: 'seatType',
+      },
+      {
+        title: '同车箱座序',
+        dataIndex: 'carriageSeatIndex',
+        key: 'carriageSeatIndex',
+      },
+      {
+        title: '售卖情况',
+        dataIndex: 'sell',
+        key: 'sell',
+      },
     ];
 
 
@@ -125,7 +126,8 @@ export default defineComponent({
         params: {
           page: param.page,
           size: param.size,
-          trainCode: params.value.trainCode,
+          date: params.value.localDate,
+          trainCode: params.value.localTrainCode
         }
       }).then((response) => {
         loading.value = false;
