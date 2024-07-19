@@ -1,7 +1,9 @@
 <template>
   <p>
     <a-space>
-      <a-button type="primary" @click="handleQuery()">刷新</a-button>
+      <train-select-view v-model="params.localTrainCode"/>
+      <a-date-picker v-model:value="params.localDate" valueFormat="YYYY-MM-DD" placeholder="请选择日期" />
+      <a-button type="primary" @click="handleQuery()">查询</a-button>
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
@@ -94,6 +96,10 @@ export default defineComponent({
       pageSize: 10,
     });
     let loading = ref(false);
+    let params = ref({
+      localDate: null,
+      localTrainCode: null
+    })
     const columns = [
     {
       title: '日期',
@@ -218,7 +224,9 @@ export default defineComponent({
       axios.get("/business/admin/daily-train-station/query-list", {
         params: {
           page: param.page,
-          size: param.size
+          size: param.size,
+          date: params.value.localDate,
+          trainCode: params.value.localTrainCode
         }
       }).then((response) => {
         loading.value = false;
@@ -262,7 +270,8 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
+      params
     };
   },
 });
