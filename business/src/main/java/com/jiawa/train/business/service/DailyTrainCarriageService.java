@@ -8,6 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.DailyTrainCarriage;
 import com.jiawa.train.business.domain.DailyTrainCarriageExample;
+import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.mapper.DailyTrainCarriageMapper;
 import com.jiawa.train.business.req.DailyTrainCarriageQueryReq;
 import com.jiawa.train.business.req.DailyTrainCarriageSaveReq;
@@ -35,7 +36,15 @@ public class DailyTrainCarriageService {
      */
     public void save(DailyTrainCarriageSaveReq req) {
         DateTime now = DateTime.now();
+
+        // 根据座位类型获取列数，自动计算座位数总和
+        String seatType = req.getSeatType();
+        List<SeatColEnum> colsByType = SeatColEnum.getColsByType(seatType);
+        req.setSeatCount(colsByType.size() * req.getRowCount());
+        req.setColCount(colsByType.size());
+
         DailyTrainCarriage dailyTrainCarriage = BeanUtil.copyProperties(req, DailyTrainCarriage.class);
+
         if (ObjectUtil.isNull(dailyTrainCarriage.getId())) {
             dailyTrainCarriage.setId(SnowUtil.getSnowflakeNextId());
             dailyTrainCarriage.setCreateTime(now);
