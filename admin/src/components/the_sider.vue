@@ -37,6 +37,11 @@
             <user-outlined/> &nbsp; 每日座位管理
           </router-link>
         </a-menu-item>
+        <a-menu-item key="/business/daily-train-station">
+          <router-link to="/business/daily-train-station">
+            <user-outlined/> &nbsp; 每日火车车站管理
+          </router-link>
+        </a-menu-item>
       </a-sub-menu>
 
 
