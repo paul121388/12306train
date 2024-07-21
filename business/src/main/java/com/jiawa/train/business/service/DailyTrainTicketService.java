@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.DailyTrain;
@@ -62,7 +63,7 @@ public class DailyTrainTicketService {
     }
 
     /**
-     * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     * 乘客查询 1.控制端查询所有余票（增加条件查询）
      * @param req
      */
     public PageResp<DailyTrainTicketQueryResp> queryList(DailyTrainTicketQueryReq req){
@@ -71,6 +72,19 @@ public class DailyTrainTicketService {
         dailyTrainTicketExample.setOrderByClause("id desc");
         DailyTrainTicketExample.Criteria criteria = dailyTrainTicketExample.createCriteria();
 
+        // 增加查询条件
+        if(ObjectUtil.isNotNull(req.getDate())){
+            criteria.andDateEqualTo(req.getDate());
+        }
+        if(StrUtil.isNotEmpty(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
+        if(StrUtil.isNotEmpty(req.getStart())){
+            criteria.andStartEqualTo(req.getStart());
+        }
+        if(StrUtil.isNotEmpty(req.getEnd())){
+            criteria.andEndEqualTo(req.getEnd());
+        }
 
         // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
         LOG.info("页数：{}", req.getPage());
@@ -99,7 +113,6 @@ public class DailyTrainTicketService {
         dailyTrainTicketMapper.deleteByPrimaryKey(id);
     }
 
-    // 生成每日余票信息
 
     /**
      * 生成每日余票信息
