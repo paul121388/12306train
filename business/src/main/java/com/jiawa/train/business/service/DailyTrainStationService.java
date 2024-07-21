@@ -110,7 +110,7 @@ public class DailyTrainStationService {
      */
     public void genDaily(Date date, String trainCode) {
         // 打印日志
-        LOG.info("开始生成日期【{}】车次【{}】数据", DateUtil.formatDate(date) , trainCode);
+        LOG.info("开始生成日期【{}】车次【{}】的车站数据", DateUtil.formatDate(date) , trainCode);
         // 先删除后生成
         // 查出traincode对应的基础车次车站信息
         List<TrainStation> trainStationList = trainStationService.selectByTrainCode(trainCode);
@@ -144,6 +144,8 @@ public class DailyTrainStationService {
             dailyTrainStation.setUpdateTime(now);
             // 插入数据库
             dailyTrainStationMapper.insert(dailyTrainStation);
+            // 打印日志
+            LOG.info("生成日期【{}】车次【{}】的车站数据结束", DateUtil.formatDate(date) , trainCode);
 
         }
     }

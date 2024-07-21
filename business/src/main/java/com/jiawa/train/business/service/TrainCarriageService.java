@@ -133,4 +133,6 @@ public class TrainCarriageService {
         example.setOrderByClause("id desc");
         return trainCarriageMapper.selectByExample(example);
     }
+
+
 }

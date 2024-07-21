@@ -3,6 +3,7 @@ package com.jiawa.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
@@ -34,6 +35,8 @@ public class DailyTrainService {
     private TrainService trainService;
     @Resource
     private DailyTrainStationService dailyTrainStationService;
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
 
 
     /**
@@ -126,6 +129,8 @@ public class DailyTrainService {
     }
 
     private void genDailyTrain(Date date, Train train) {
+        // 打印日志
+        LOG.info("开始生成日期【{}】车次【{}】数据", DateUtil.formatDate(date) , train.getCode());
         // 考虑重复生成
         // 首先将数据库中对应车次数据清空，日期和车次
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
@@ -149,5 +154,10 @@ public class DailyTrainService {
 
         // 生成date的编号为code的车次车站数据
         dailyTrainStationService.genDaily(date, train.getCode());
+
+        // 生成date的编号为code的车次车厢数据
+        dailyTrainCarriageService.genDaily(date, train.getCode());
+        // 打印日志
+        LOG.info("生成日期【{}】车次【{}】数据结束", DateUtil.formatDate(date) , train.getCode());
     }
 }

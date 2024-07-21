@@ -137,6 +137,5 @@ public class TrainStationService {
         trainStationExample.createCriteria()
                 .andTrainCodeEqualTo(trainCode);
         return trainStationMapper.selectByExample(trainStationExample);
-
     }
 }
