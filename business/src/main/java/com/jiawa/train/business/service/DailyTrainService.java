@@ -1,6 +1,7 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -8,6 +9,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.DailyTrain;
 import com.jiawa.train.business.domain.DailyTrainExample;
+import com.jiawa.train.business.domain.Train;
 import com.jiawa.train.business.mapper.DailyTrainMapper;
 import com.jiawa.train.business.req.DailyTrainQueryReq;
 import com.jiawa.train.business.req.DailyTrainSaveReq;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,12 +30,15 @@ public class DailyTrainService {
 
     @Resource
     private DailyTrainMapper dailyTrainMapper;
+    @Resource
+    private TrainService trainService;
 
     /**
      * 1.新增乘客  2.修改乘客
+     *
      * @param req
      */
-    public void save(DailyTrainSaveReq req){
+    public void save(DailyTrainSaveReq req) {
         DateTime now = DateTime.now();
         DailyTrain dailyTrain = BeanUtil.copyProperties(req, DailyTrain.class);
         if (ObjectUtil.isNull(dailyTrain.getId())) {
@@ -51,19 +57,20 @@ public class DailyTrainService {
 
     /**
      * 乘客查询 1.控制端查询所有乘客  2.business查询当前乘客
+     *
      * @param req
      */
-    public PageResp<DailyTrainQueryResp> queryList(DailyTrainQueryReq req){
+    public PageResp<DailyTrainQueryResp> queryList(DailyTrainQueryReq req) {
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
 
         dailyTrainExample.setOrderByClause("id desc");
         DailyTrainExample.Criteria criteria = dailyTrainExample.createCriteria();
 
-        if(ObjectUtil.isNotNull(req.getDate())){
+        if (ObjectUtil.isNotNull(req.getDate())) {
             criteria.andCreateTimeGreaterThanOrEqualTo(req.getDate());
         }
 
-        if(StrUtil.isNotEmpty(req.getCode())){
+        if (StrUtil.isNotEmpty(req.getCode())) {
             criteria.andCodeEqualTo(req.getCode());
         }
 
@@ -88,9 +95,50 @@ public class DailyTrainService {
 
     /**
      * 乘客删除
+     *
      * @param id
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         dailyTrainMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 生成每日所有车次，车次、车站、车厢、座位
+     *
+     * @param date
+     */
+    public void genDaily(Date date) {
+        // 查询基础数据
+        List<Train> trainList = trainService.selectAll();
+        // 使用列表之前判断是否为空
+        if (CollUtil.isEmpty(trainList)) {
+            LOG.info("基础数据为空");
+            return;
+        }
+
+        // 拿到车次基础数据后，循环生成车次
+        for (Train train : trainList) {
+            genDailyTrain(date, train);
+        }
+    }
+
+    private void genDailyTrain(Date date, Train train) {
+        // 考虑重复生成
+        // 首先将数据库中对应车次数据清空，日期和车次
+        DailyTrainExample dailyTrainExample = new DailyTrainExample();
+        dailyTrainExample.createCriteria()
+                .andCodeEqualTo(train.getCode())
+                .andDateEqualTo(date);
+        // 执行删除操作
+        dailyTrainMapper.deleteByExample(dailyTrainExample);
+
+        // 生成date的编号为code的车次
+        // 将train复制到dailyTrain
+        DailyTrain dailyTrain = BeanUtil.copyProperties(train, DailyTrain.class);
+        // 设置dailyTrain的id,date
+        dailyTrain.setId(SnowUtil.getSnowflakeNextId());
+        dailyTrain.setDate(date);
+        // 插入数据库
+        dailyTrainMapper.insert(dailyTrain);
     }
 }

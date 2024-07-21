@@ -110,13 +110,21 @@ public class TrainService {
      * @return
      */
     public List<TrainQueryResp> queryAll(){
+        List<Train> trainList = selectAll();
+
+        return BeanUtil.copyToList(trainList, TrainQueryResp.class);
+    }
+
+    /**
+     * 查询所有列车，直接获得数据库的信息
+     * @return
+     */
+    public List<Train> selectAll() {
         TrainExample trainExample = new TrainExample();
 
         trainExample.setOrderByClause("code asc");
         TrainExample.Criteria criteria = trainExample.createCriteria();
 
-        List<Train> trainList = trainMapper.selectByExample(trainExample);
-
-        return BeanUtil.copyToList(trainList, TrainQueryResp.class);
+        return trainMapper.selectByExample(trainExample);
     }
 }

@@ -8,7 +8,10 @@ import com.jiawa.train.resp.CommonResp;
 import com.jiawa.train.resp.PageResp;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("/admin/daily-train")
@@ -50,9 +53,25 @@ public class DailyTrainAdminController<businessLoginReq> {
         return new CommonResp<>(dailyTrainQueryRespPageResp);
     }
 
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         dailyTrainService.delete(id);
+        return new CommonResp();
+    }
+
+    /**
+     * 生成每日车次数据，包括车次，火车车厢，火车车站，火车座位
+     * @param date
+     * @return
+     */
+    @GetMapping("/gen-daily/{date}")
+    public CommonResp genDaily(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        dailyTrainService.genDaily(date);
         return new CommonResp();
     }
 
