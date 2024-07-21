@@ -50,10 +50,17 @@ public class DailyTrainTicketAdminController<businessLoginReq> {
         return new CommonResp<>(dailyTrainTicketQueryRespPageResp);
     }
 
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         dailyTrainTicketService.delete(id);
         return new CommonResp();
     }
+
+
 
 }

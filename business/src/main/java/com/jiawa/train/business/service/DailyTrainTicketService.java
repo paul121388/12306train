@@ -1,12 +1,15 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.DailyTrainTicket;
 import com.jiawa.train.business.domain.DailyTrainTicketExample;
+import com.jiawa.train.business.domain.TrainStation;
 import com.jiawa.train.business.mapper.DailyTrainTicketMapper;
 import com.jiawa.train.business.req.DailyTrainTicketQueryReq;
 import com.jiawa.train.business.req.DailyTrainTicketSaveReq;
@@ -17,7 +20,10 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,6 +32,8 @@ public class DailyTrainTicketService {
 
     @Resource
     private DailyTrainTicketMapper dailyTrainTicketMapper;
+    @Resource
+    private TrainStationService trainStationService;
 
     /**
      * 1.新增乘客  2.修改乘客
@@ -82,5 +90,74 @@ public class DailyTrainTicketService {
      */
     public void delete(Long id){
         dailyTrainTicketMapper.deleteByPrimaryKey(id);
+    }
+
+    // 生成每日余票信息
+    @Transactional
+    public void genDaily(Date date, String trainCode) {
+        LOG.info("开始生成日期【{}】车次为【{}】的余票数据", DateUtil.formatDate(date) , trainCode);
+        // 删除（date，traincode）
+        // 考虑重复生成
+        // 首先将数据库中对应车厢数据清空，日期和车厢
+        DailyTrainTicketExample dailyTrainTicketExample = new DailyTrainTicketExample();
+        dailyTrainTicketExample.createCriteria()
+                .andTrainCodeEqualTo(trainCode)
+                .andDateEqualTo(date);
+        // 执行删除操作
+        dailyTrainTicketMapper.deleteByExample(dailyTrainTicketExample);
+
+        // 查找途径的车站信息（date，traincode）
+        // 查出traincode对应的基础车次车站信息
+        List<TrainStation> trainStationList = trainStationService.selectByTrainCode(trainCode);
+
+        if (CollUtil.isEmpty(trainStationList)) {
+            LOG.info("基础火车车站数据为空，生成车次【{}】每日余票失败", trainCode);
+            return;
+        }
+
+        DateTime now = DateTime.now();
+        // 循环，将每段的出发站和结束站放入数据库
+        // 外层：遍历出发站
+        for (int i = 0; i < trainStationList.size(); i++) {
+            // 内层：从出发站开始遍历得到结束站
+            // 得到出发站
+            TrainStation start = trainStationList.get(i);
+            for (int j = i+1; j < trainStationList.size(); j++) {
+                // 得到结束站
+                TrainStation end = trainStationList.get(j);
+                // 构造余票信息，设置开始和结束站（及其剩余的数据）
+                DailyTrainTicket dailyTrainTicket = new DailyTrainTicket();
+
+                dailyTrainTicket.setId(SnowUtil.getSnowflakeNextId());
+                dailyTrainTicket.setDate(date);
+                dailyTrainTicket.setTrainCode(trainCode);
+                dailyTrainTicket.setStart(start.getName());
+                dailyTrainTicket.setStartPinyin(start.getNamePinyin());
+                dailyTrainTicket.setStartTime(start.getOutTime());
+                dailyTrainTicket.setStartIndex(start.getIndex());
+                dailyTrainTicket.setEnd(end.getName());
+                dailyTrainTicket.setEndPinyin(end.getNamePinyin());
+                dailyTrainTicket.setEndTime(end.getInTime());
+                dailyTrainTicket.setEndIndex(end.getIndex());
+                dailyTrainTicket.setYdz(0);
+                // 金额的操作BigDecimal
+                dailyTrainTicket.setYdzPrice(BigDecimal.ZERO);
+                dailyTrainTicket.setEdz(0);
+                // 金额的操作BigDecimal
+                dailyTrainTicket.setEdzPrice(BigDecimal.ZERO);
+                dailyTrainTicket.setRw(0);
+                dailyTrainTicket.setRwPrice(BigDecimal.ZERO);
+                dailyTrainTicket.setYw(0);
+                dailyTrainTicket.setYwPrice(BigDecimal.ZERO);
+                dailyTrainTicket.setCreateTime(now);
+                dailyTrainTicket.setUpdateTime(now);
+
+                // 保存到数据库
+                dailyTrainTicketMapper.insert(dailyTrainTicket);
+                // 打印日志
+            }
+        }
+
+        LOG.info("生成日期【{}】车次为【{}】的余票数据结束", DateUtil.formatDate(date) , trainCode);
     }
 }
