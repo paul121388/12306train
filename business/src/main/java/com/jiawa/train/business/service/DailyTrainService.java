@@ -32,6 +32,9 @@ public class DailyTrainService {
     private DailyTrainMapper dailyTrainMapper;
     @Resource
     private TrainService trainService;
+    @Resource
+    private DailyTrainStationService dailyTrainStationService;
+
 
     /**
      * 1.新增乘客  2.修改乘客
@@ -112,7 +115,7 @@ public class DailyTrainService {
         List<Train> trainList = trainService.selectAll();
         // 使用列表之前判断是否为空
         if (CollUtil.isEmpty(trainList)) {
-            LOG.info("基础数据为空");
+            LOG.info("火车基础数据为空");
             return;
         }
 
@@ -133,12 +136,18 @@ public class DailyTrainService {
         dailyTrainMapper.deleteByExample(dailyTrainExample);
 
         // 生成date的编号为code的车次
+        DateTime now = DateTime.now();
         // 将train复制到dailyTrain
         DailyTrain dailyTrain = BeanUtil.copyProperties(train, DailyTrain.class);
-        // 设置dailyTrain的id,date
+        // 设置dailyTrain的id,date,createTime,updateTime
         dailyTrain.setId(SnowUtil.getSnowflakeNextId());
         dailyTrain.setDate(date);
+        dailyTrain.setCreateTime(now);
+        dailyTrain.setUpdateTime(now);
         // 插入数据库
         dailyTrainMapper.insert(dailyTrain);
+
+        // 生成date的编号为code的车次车站数据
+        dailyTrainStationService.genDaily(date, train.getCode());
     }
 }

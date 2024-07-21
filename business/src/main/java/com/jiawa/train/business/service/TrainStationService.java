@@ -125,4 +125,18 @@ public class TrainStationService {
     public void delete(Long id){
         trainStationMapper.deleteByPrimaryKey(id);
     }
+
+    /**
+     * 根据车次编号查询火车车站
+     * @param trainCode
+     * @return
+     */
+    public List<TrainStation> selectByTrainCode(String trainCode) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.setOrderByClause("'index' asc");
+        trainStationExample.createCriteria()
+                .andTrainCodeEqualTo(trainCode);
+        return trainStationMapper.selectByExample(trainStationExample);
+
+    }
 }
