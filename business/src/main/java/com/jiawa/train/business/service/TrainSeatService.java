@@ -146,4 +146,16 @@ public class TrainSeatService {
             }
         }
     }
+
+    /**
+     * 根据列车code，查询列车所属的所有车厢
+     * @param trainCode
+     * @return
+     */
+    public List<TrainSeat> selectByTrainCode(String trainCode) {
+        TrainSeatExample example = new TrainSeatExample();
+        example.createCriteria().andTrainCodeEqualTo(trainCode);
+        example.setOrderByClause("id asc");
+        return trainSeatMapper.selectByExample(example);
+    }
 }
