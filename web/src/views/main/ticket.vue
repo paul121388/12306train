@@ -15,6 +15,7 @@
            :loading="loading">
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
+        <a-button type="primary" @click="toOrder(record)">预订</a-button>
       </template>
       <template v-else-if="column.dataIndex === 'station'">
         {{ record.start }}<br/>
@@ -80,6 +81,7 @@ import axios from "axios";
 // import TrainSelectView from "@/components/train-select";
 import StationSelectView from "@/components/station-select";
 import dayjs from "dayjs";
+import router from "@/router";
 
 
 export default defineComponent({
@@ -163,6 +165,11 @@ export default defineComponent({
         dataIndex: 'yw',
         key: 'yw',
       },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+      },
+
     ];
 
 
@@ -215,6 +222,13 @@ export default defineComponent({
       });
     };
 
+    const toOrder = (record) => {
+      dailyTrainTicket.value = Tool.copy(record);
+      SessionStorage.set("dailyTrainTicket", dailyTrainTicket.value);
+      router.push("/order")
+    };
+
+
     const handleTableChange = (page) => {
       // console.log("看看自带的分页参数都有啥：" + JSON.stringify(page));
       pagination.value.pageSize = page.pageSize;
@@ -246,7 +260,8 @@ export default defineComponent({
       handleQuery,
       loading,
       params,
-      calDuration
+      calDuration,
+      toOrder
     };
   },
 });
