@@ -1,7 +1,7 @@
 <template>
   <p>
     <a-space>
-<!--      <train-select-view v-model="params.trainCode" width="200px"></train-select-view>-->
+      <!--      <train-select-view v-model="params.trainCode" width="200px"></train-select-view>-->
       <a-date-picker v-model:value="params.date" valueFormat="YYYY-MM-DD" placeholder="请选择日期"></a-date-picker>
       <station-select-view v-model="params.start" width="200px"></station-select-view>
       <station-select-view v-model="params.end" width="200px"></station-select-view>
@@ -186,6 +186,10 @@ export default defineComponent({
         notification.error({description: "请输入目的地"});
         return;
       }
+
+      // 保存查询参数
+      SessionStorage.set(SESSION_TICKET_PARAMS, params.value);
+
       if (!param) {
         param = {
           page: 1,
@@ -224,7 +228,7 @@ export default defineComponent({
 
     const toOrder = (record) => {
       dailyTrainTicket.value = Tool.copy(record);
-      SessionStorage.set("dailyTrainTicket", dailyTrainTicket.value);
+      SessionStorage.set(SESSION_ORDER, dailyTrainTicket.value);
       router.push("/order")
     };
 
@@ -244,10 +248,15 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      // handleQuery({
-      //   page: 1,
-      //   size: pagination.value.pageSize
-      // });
+      //  "|| {}"是常用技巧，可以避免空指针异常
+      params.value = SessionStorage.get(SESSION_TICKET_PARAMS) || {};
+      if (Tool.isNotEmpty(params.value)) {
+        handleQuery({
+          page: 1,
+          size: pagination.value.pageSize
+        });
+      }
+
     });
 
     return {
