@@ -30,9 +30,10 @@ public class PassengerService {
 
     /**
      * 1.新增乘客  2.修改乘客
+     *
      * @param req
      */
-    public void save(PassengerSaveReq req){
+    public void save(PassengerSaveReq req) {
         DateTime now = DateTime.now();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
         if (ObjectUtil.isNull(passenger.getId())) {
@@ -50,15 +51,16 @@ public class PassengerService {
 
     /**
      * 乘客查询 1.控制端查询所有乘客  2.member查询当前乘客
+     *
      * @param req
      */
-    public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req){
+    public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req) {
         PassengerExample passengerExample = new PassengerExample();
 
         passengerExample.setOrderByClause("id desc");
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
 
-        if(ObjectUtil.isNotNull(LoginMemberContext.getMemberId())){
+        if (ObjectUtil.isNotNull(LoginMemberContext.getMemberId())) {
             // 为了让后续控制台调用方法时，没有会员ID（因为不是会员登录）也能使用这个方法，这里的memberID应该在controller赋值
 //            criteria.andMemberIdEqualTo(LoginMemberContext.getMemberId());
             criteria.andMemberIdEqualTo(req.getMemberId());
@@ -84,9 +86,22 @@ public class PassengerService {
 
     /**
      * 乘客删除
+     *
      * @param id
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         passengerMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 查询当前会员id的乘客
+     * @return
+     */
+    public List<Passenger> queryMine() {
+        PassengerExample passengerExample = new PassengerExample();
+        passengerExample.setOrderByClause("id desc");
+        PassengerExample.Criteria criteria = passengerExample.createCriteria();
+        criteria.andMemberIdEqualTo(LoginMemberContext.getMemberId());
+        return passengerMapper.selectByExample(passengerExample);
     }
 }

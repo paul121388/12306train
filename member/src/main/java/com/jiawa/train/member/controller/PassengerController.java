@@ -1,6 +1,7 @@
 package com.jiawa.train.member.controller;
 
 import com.jiawa.train.context.LoginMemberContext;
+import com.jiawa.train.member.domain.Passenger;
 import com.jiawa.train.member.req.PassengerQueryReq;
 import com.jiawa.train.member.req.PassengerSaveReq;
 import com.jiawa.train.member.resp.PassengerQueryResp;
@@ -10,6 +11,8 @@ import com.jiawa.train.resp.PageResp;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/passenger")
@@ -52,10 +55,21 @@ public class PassengerController<memberLoginReq> {
         return new CommonResp<>(passengerQueryRespPageResp);
     }
 
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
         passengerService.delete(id);
         return new CommonResp();
+    }
+
+    @GetMapping("/query-mine")
+    public CommonResp<List<Passenger>> queryMine() {
+        List<Passenger> passengerList = passengerService.queryMine();
+        return new CommonResp<>(passengerList);
     }
 
 }
