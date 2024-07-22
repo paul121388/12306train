@@ -1,7 +1,7 @@
 package com.jiawa.train.business.controller.admin;
 
 import com.jiawa.train.business.req.ConfirmOrderQueryReq;
-import com.jiawa.train.business.req.ConfirmOrderSaveReq;
+import com.jiawa.train.business.req.ConfirmOrderDoReq;
 import com.jiawa.train.business.resp.ConfirmOrderQueryResp;
 import com.jiawa.train.business.service.ConfirmOrderService;
 import com.jiawa.train.resp.CommonResp;
@@ -34,7 +34,7 @@ public class ConfirmOrderAdminController<businessLoginReq> {
      * @return
      */
     @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody ConfirmOrderSaveReq businessRegisterReq) {
+    public CommonResp<Object> save(@Valid @RequestBody ConfirmOrderDoReq businessRegisterReq) {
         confirmOrderService.save(businessRegisterReq);
         return new CommonResp<>();
     }
