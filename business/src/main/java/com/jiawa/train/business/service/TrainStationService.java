@@ -99,6 +99,7 @@ public class TrainStationService {
         TrainStationExample.Criteria criteria = trainStationExample.createCriteria();
 
 
+
         // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
         LOG.info("页数：{}", req.getPage());
         LOG.info("每页大小：{}", req.getSize());
