@@ -111,12 +111,13 @@ public class DailyTrainCarriageService {
 
     /**
      * 生成每日火车车厢数据
+     *
      * @param date
      * @param trainCode
      */
     public void genDaily(Date date, String trainCode) {
         // 打印日志
-        LOG.info("开始生成日期【{}】车次为【{}】的车厢数据", DateUtil.formatDate(date) , trainCode);
+        LOG.info("开始生成日期【{}】车次为【{}】的车厢数据", DateUtil.formatDate(date), trainCode);
         // 先删除后生成
         // 查出traincode对应的基础车厢信息
         List<TrainCarriage> trainCarriageList = trainCarriageService.selectByTrainCode(trainCode);
@@ -136,7 +137,7 @@ public class DailyTrainCarriageService {
         dailyTrainCarriageMapper.deleteByExample(dailyTrainCarriageExample);
 
 
-        // 由于一趟车厢有多个站点，所以需要遍历
+        // 由于一趟车有多个车厢，所以需要遍历
         for (TrainCarriage trainCarriage : trainCarriageList) {
             // 生成每天的站点信息
             // 生成date的编号为code的车厢
@@ -151,7 +152,16 @@ public class DailyTrainCarriageService {
             // 插入数据库
             dailyTrainCarriageMapper.insert(dailyTrainCarriage);
             // 打印日志
-            LOG.info("生成日期【{}】车次为【{}】的车厢数据结束", DateUtil.formatDate(date) , trainCode);
+            LOG.info("生成日期【{}】车次为【{}】的车厢【{}】数据结束", DateUtil.formatDate(date), trainCode, trainCarriage.getIndex());
         }
+    }
+
+    public List<DailyTrainCarriage> selectBySeatType(Date date, String trainCode, String seatType) {
+        DailyTrainCarriageExample example = new DailyTrainCarriageExample();
+        example.createCriteria()
+                .andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode)
+                .andSeatTypeEqualTo(seatType);
+        return dailyTrainCarriageMapper.selectByExample(example);
     }
 }

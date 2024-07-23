@@ -8,9 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jiawa.train.business.domain.ConfirmOrder;
-import com.jiawa.train.business.domain.ConfirmOrderExample;
-import com.jiawa.train.business.domain.DailyTrainTicket;
+import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.enums.SeatTypeEnum;
@@ -41,6 +39,10 @@ public class ConfirmOrderService {
     private ConfirmOrderMapper confirmOrderMapper;
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
 
     /**
      * 1.新增乘客  2.修改乘客
@@ -144,7 +146,7 @@ public class ConfirmOrderService {
             List<String> referSeatList = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 for (SeatColEnum seatColEnum : colEnumList) {
-                    referSeatList.add((seatColEnum.getCode() + (i+1)));
+                    referSeatList.add((seatColEnum.getCode() + (i + 1)));
                 }
             }
             LOG.info("参考座位：{}", referSeatList);
@@ -159,25 +161,47 @@ public class ConfirmOrderService {
 
             // 2. 计算相对偏移值（都减去第一个座位的绝对偏移值）
             List<Integer> relOffsetList = new ArrayList<>();
-            for (Integer index: absOffsetList) {
+            for (Integer index : absOffsetList) {
                 relOffsetList.add(index - absOffsetList.get(0));
             }
             LOG.info("相对偏移值：{}", relOffsetList);
+
+            // 进行选座
+            getSeat(date, trainCode, ticketReq.getSeatTypeCode(), ticketReq.getSeat().split("")[0], relOffsetList);
         } else {
             // 不可选座时
             LOG.info("不可选座");
+
+            /*进行选座：
+                循环每张票，获取这张票的座位类型*/
+            for(ConfirmOrderTicketReq confirmOrderTicketReq: confirmOrderTicketReqList){
+                getSeat(date, trainCode, confirmOrderTicketReq.getSeatTypeCode(), null, null);
+            }
         }
 
+         /*选座
+         遍历车厢获取座位数据
+         调休符合条件的座位（多个选座应该在同一个车厢*/
 
-        // 选座
-        // 遍历车厢获取座位数据
-        // 调休符合条件的座位（多个选座应该在同一个车厢
 
         // 选中座位后事务处理
         // 座位表售卖情况修改
         // 余票详情表修改余票
         // 为会员增加购票记录
         // 更新确认订单表
+    }
+
+    private void getSeat(Date date, String trainCode, String seatType, String column, List<Integer> relOffsetList) {
+            /*遍历车厢获取座位数据：
+                获取所有车厢；
+                遍历每个车厢，获取这个车厢下的座位数据，设置座位；*/
+        List<DailyTrainCarriage> dailyTrainCarriages = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
+        LOG.info("车厢总数{}", dailyTrainCarriages.size());
+        for (DailyTrainCarriage dailyTrainCarriage : dailyTrainCarriages) {
+            LOG.info("开始从车厢{}选座", dailyTrainCarriage.getIndex());
+            List<DailyTrainSeat> dailyTrainSeats = dailyTrainSeatService.selectByCarriage(date, trainCode, dailyTrainCarriage.getIndex());
+            LOG.info("车厢{}座位总数{}", dailyTrainCarriage.getIndex(), dailyTrainSeats.size());
+        }
     }
 
     // 扣减余票库存，判断余票是否足够
