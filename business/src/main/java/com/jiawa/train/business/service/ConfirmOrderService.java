@@ -195,6 +195,7 @@ public class ConfirmOrderService {
             /*遍历车厢获取座位数据：
                 获取所有车厢；
                 遍历每个车厢，获取这个车厢下的座位数据，设置座位；*/
+        // 根据座位类型查询对应的车厢
         List<DailyTrainCarriage> dailyTrainCarriages = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
         LOG.info("车厢总数{}", dailyTrainCarriages.size());
         for (DailyTrainCarriage dailyTrainCarriage : dailyTrainCarriages) {
