@@ -32,7 +32,7 @@ public class ConfirmOrderTicketReq {
     /**
      * 座位类型code
      */
-    @NotBlank(message = "【座位类型code】不能为空")
+//    @NotBlank(message = "【座位类型code】不能为空")
     private String seatTypeCode;
 
     /**
