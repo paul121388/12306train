@@ -1,6 +1,7 @@
 package com.jiawa.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
@@ -220,12 +221,37 @@ public class ConfirmOrderService {
         // 根据座位类型查询对应的车厢
         List<DailyTrainCarriage> dailyTrainCarriages = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
         LOG.info("车厢总数{}", dailyTrainCarriages.size());
+
+        // 遍历符合购票信息中座位类型的车厢
         for (DailyTrainCarriage dailyTrainCarriage : dailyTrainCarriages) {
             LOG.info("开始从车厢{}选座", dailyTrainCarriage.getIndex());
+
+            // 获取这个车厢的所有座位
             List<DailyTrainSeat> dailyTrainSeats = dailyTrainSeatService.selectByCarriage(date, trainCode, dailyTrainCarriage.getIndex());
             LOG.info("车厢{}座位总数{}", dailyTrainCarriage.getIndex(), dailyTrainSeats.size());
 
+            // 遍历这个车厢的所有座位
             for (DailyTrainSeat dailyTrainSeat : dailyTrainSeats) {
+                Integer seatIndex = dailyTrainSeat.getCarriageSeatIndex();
+//                在遍历座位的过程中，判断当前座位的col，是否与购票信息中选中的座位column相同；
+//                1. 获取购票信息中的座位列号，判断是否为空：
+                String col = dailyTrainSeat.getCol();
+
+                if (StrUtil.isBlank(column)) {
+//                    1.1 空，表示没有选座
+                    LOG.info("没有选座");
+                } else {
+//                    1.2 不空，表示有选座
+                    LOG.info("有选座");
+//                    将当前遍历到的座位的col，与购票信息中的座位的col比对
+                    if (!column.equals(col)) {
+//                        继续判断下一个座位
+                        LOG.info("座位{}的列号{}与购票信息中的列号{}不同，继续下一个座位",
+                                seatIndex, col, column);
+                        continue;
+                    }
+                }
+
                 boolean isChoose = calSell(dailyTrainSeat, startIndex, endIndex);
                 /**
                  * 如果已选中，结束这个方法
@@ -233,12 +259,52 @@ public class ConfirmOrderService {
                  */
                 if (isChoose) {
                     LOG.info("选中座位");
-                    return;
                 } else {
                     LOG.info("未选中座位");
                     continue;
                 }
+
+//                        保证所有座位在同一个车厢，根据nextIndex和座位总数之间的关系判断
+//                        if 不成立，则跳过当前车厢，设置变量
+                boolean isGetAllOffsetSeat = true;
+
+//                已经选完了第一个座位，根据relOffsetList，选择剩下的座位
+//                首先判断relOffsetList是否为空，不为空，表示有进行选座
+                if (CollUtil.isNotEmpty(relOffsetList)) {
+                    LOG.info("有偏移值{}，校验偏移的座位是否可选", relOffsetList);
+//                    遍历relOffsetList，从第二个开始计算剩余的座位
+
+                    for (int i = 1; i < relOffsetList.size(); i++) {
+//                    获取偏移值，并计算得到剩余的座位
+                        Integer offset = relOffsetList.get(i);
+                        int nextIndex = seatIndex + offset - 1;
+
+                        if (nextIndex > dailyTrainSeats.size()) {
+                            LOG.info("座位{}不在同一车厢，跳过", nextIndex);
+                            isGetAllOffsetSeat = false;
+                            break;
+                        }
+
+                        DailyTrainSeat nextDailyTrainSeat = dailyTrainSeats.get(nextIndex);
+                        // 判断这个座位是否可选
+                        boolean isChooseNext = calSell(nextDailyTrainSeat, startIndex, endIndex);
+                        if (isChooseNext) {
+                            LOG.info("座位{}已选中", nextDailyTrainSeat.getCarriageSeatIndex());
+                        } else {
+                            LOG.info("座位{}未选中", nextDailyTrainSeat.getCarriageSeatIndex());
+                            isGetAllOffsetSeat = false;
+                            break;
+                        }
+                    }
+                }
+                if (!isGetAllOffsetSeat) {
+                    continue;
+                }
+
+//                全部座位已经选好，保存座位
+                return;
             }
+
         }
 
     }
@@ -285,7 +351,8 @@ public class ConfirmOrderService {
     }
 
     // 扣减余票库存，判断余票是否足够
-    private void reduceTicket(List<ConfirmOrderTicketReq> confirmOrderTicketReqList, DailyTrainTicket dailyTrainTicket) {
+    private void reduceTicket(List<ConfirmOrderTicketReq> confirmOrderTicketReqList, DailyTrainTicket
+            dailyTrainTicket) {
         for (ConfirmOrderTicketReq ticketReq : confirmOrderTicketReqList) {
             String seatTypeCode = ticketReq.getSeatTypeCode();
             SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getCode, seatTypeCode);
