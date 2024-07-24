@@ -206,8 +206,7 @@ public class ConfirmOrderService {
 
 //          选中座位后事务处理
 //              座位表售卖情况修改
-        afterConfirmOrderService.afterDoConfirm(finalSeatList);
-
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList);
     //          余票详情表修改余票
     //          为会员增加购票记录
     //          更新确认订单表
