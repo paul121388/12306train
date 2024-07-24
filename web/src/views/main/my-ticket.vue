@@ -2,7 +2,7 @@
   <p>
     <a-space>
       <a-button type="primary" @click="handleQuery()">刷新</a-button>
-      
+
     </a-space>
   </p>
   <a-table :dataSource="tickets"
@@ -13,9 +13,9 @@
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
       </template>
-      <template v-else-if="column.dataIndex === 'seatCol'">
+      <template v-else-if="column.dataIndex === 'col'">
         <span v-for="item in SEAT_COL_ARRAY" :key="item.code">
-          <span v-if="item.code === record.seatCol && item.type === record.seatType">
+          <span v-if="item.code === record.col && item.type === record.seatType">
             {{item.desc}}
           </span>
         </span>
@@ -47,14 +47,14 @@ export default defineComponent({
       memberId: undefined,
       passengerId: undefined,
       passengerName: undefined,
-      trainDate: undefined,
+      date: undefined,
       trainCode: undefined,
       carriageIndex: undefined,
-      seatRow: undefined,
-      seatCol: undefined,
-      startStation: undefined,
+      row: undefined,
+      col: undefined,
+      start: undefined,
       startTime: undefined,
-      endStation: undefined,
+      end: undefined,
       endTime: undefined,
       seatType: undefined,
       createTime: undefined,
@@ -124,6 +124,11 @@ export default defineComponent({
       dataIndex: 'seatType',
       key: 'seatType',
     },
+    {
+      title: '出票时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+    },
     ];
 
 
@@ -135,7 +140,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      axios.get("/member/admin/ticket/query-list", {
+      axios.get("/member/ticket/query-list", {
         params: {
           page: param.page,
           size: param.size

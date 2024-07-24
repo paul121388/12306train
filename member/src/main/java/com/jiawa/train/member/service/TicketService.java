@@ -2,6 +2,7 @@ package com.jiawa.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.ObjUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.member.domain.Ticket;
@@ -51,7 +52,9 @@ public class TicketService {
 
         ticketExample.setOrderByClause("id desc");
         TicketExample.Criteria criteria = ticketExample.createCriteria();
-
+        if (ObjUtil.isNotNull(req.getMemberId())) {
+            criteria.andMemberIdEqualTo(req.getMemberId());
+        }
 
         // 分页查询语句尽量与需要分页查询的sql语句放在一起，因为其只对最近的一条select语句生效
         LOG.info("页数：{}", req.getPage());
