@@ -45,6 +45,8 @@ public class ConfirmOrderService {
     private DailyTrainCarriageService dailyTrainCarriageService;
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
+    @Resource
+    private AfterConfirmOrderService afterConfirmOrderService;
 
     /**
      * 1.新增乘客  2.修改乘客
@@ -202,16 +204,13 @@ public class ConfirmOrderService {
 
         LOG.info("最终选座结果：{}", finalSeatList);
 
-         /*选座
-         遍历车厢获取座位数据
-         调休符合条件的座位（多个选座应该在同一个车厢*/
+//          选中座位后事务处理
+//              座位表售卖情况修改
+        afterConfirmOrderService.afterDoConfirm(finalSeatList);
 
-
-        // 选中座位后事务处理
-        // 座位表售卖情况修改
-        // 余票详情表修改余票
-        // 为会员增加购票记录
-        // 更新确认订单表
+    //          余票详情表修改余票
+    //          为会员增加购票记录
+    //          更新确认订单表
     }
 
     /**
