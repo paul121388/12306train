@@ -1,14 +1,15 @@
 package com.jiawa.train.member.controller.admin;
 
 import com.jiawa.train.member.req.TicketQueryReq;
-import com.jiawa.train.member.req.TicketSaveReq;
 import com.jiawa.train.member.resp.TicketQueryResp;
 import com.jiawa.train.member.service.TicketService;
 import com.jiawa.train.resp.CommonResp;
 import com.jiawa.train.resp.PageResp;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin/ticket")
@@ -29,17 +30,6 @@ public class TicketAdminController<memberLoginReq> {
 
 
     /**
-     * 保存
-     * @param memberRegisterReq
-     * @return
-     */
-    @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody TicketSaveReq memberRegisterReq) {
-        ticketService.save(memberRegisterReq);
-        return new CommonResp<>();
-    }
-
-    /**
      * 查询乘客列表
      * @param req
      * @return
@@ -48,12 +38,6 @@ public class TicketAdminController<memberLoginReq> {
     public CommonResp<PageResp<TicketQueryResp>> queryList(@Valid TicketQueryReq req) {
         PageResp<TicketQueryResp> ticketQueryRespPageResp = ticketService.queryList(req);
         return new CommonResp<>(ticketQueryRespPageResp);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id) {
-        ticketService.delete(id);
-        return new CommonResp();
     }
 
 }

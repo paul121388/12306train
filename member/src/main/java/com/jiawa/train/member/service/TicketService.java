@@ -2,15 +2,14 @@ package com.jiawa.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.member.domain.Ticket;
 import com.jiawa.train.member.domain.TicketExample;
 import com.jiawa.train.member.mapper.TicketMapper;
 import com.jiawa.train.member.req.TicketQueryReq;
-import com.jiawa.train.member.req.TicketSaveReq;
 import com.jiawa.train.member.resp.TicketQueryResp;
+import com.jiawa.train.req.MemberTicketReq;
 import com.jiawa.train.resp.PageResp;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -29,28 +28,25 @@ public class TicketService {
 
     /**
      * 1.新增乘客  2.修改乘客
+     *
      * @param req
      */
-    public void save(TicketSaveReq req){
+    public void save(MemberTicketReq req) {
         DateTime now = DateTime.now();
         Ticket ticket = BeanUtil.copyProperties(req, Ticket.class);
-        if (ObjectUtil.isNull(ticket.getId())) {
-            ticket.setId(SnowUtil.getSnowflakeNextId());
-            ticket.setCreateTime(now);
-            ticket.setUpdateTime(now);
-            ticketMapper.insert(ticket);
-        } else {
-            ticket.setUpdateTime(now);
-            ticket.setCreateTime(req.getCreateTime());
-            ticketMapper.updateByPrimaryKey(ticket);
-        }
+        ticket.setId(SnowUtil.getSnowflakeNextId());
+        ticket.setCreateTime(now);
+        ticket.setUpdateTime(now);
+        ticketMapper.insert(ticket);
+
     }
 
     /**
      * 乘客查询 1.控制端查询所有乘客  2.member查询当前乘客
+     *
      * @param req
      */
-    public PageResp<TicketQueryResp> queryList(TicketQueryReq req){
+    public PageResp<TicketQueryResp> queryList(TicketQueryReq req) {
         TicketExample ticketExample = new TicketExample();
 
         ticketExample.setOrderByClause("id desc");
@@ -78,9 +74,10 @@ public class TicketService {
 
     /**
      * 乘客删除
+     *
      * @param id
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         ticketMapper.deleteByPrimaryKey(id);
     }
 }
