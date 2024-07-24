@@ -69,10 +69,13 @@ const routes = [
 
                 ]
             },
-
             {
                 path: 'batch/job',
                 component: () => import('../views/main/batch/job.vue')
+            },
+            {
+                path: 'member/ticket',
+                component: () => import('../views/main/member/ticket.vue')
             }
 
 
