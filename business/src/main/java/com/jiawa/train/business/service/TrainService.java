@@ -20,6 +20,7 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -109,9 +110,11 @@ public class TrainService {
      * @param
      * @return
      */
+    @Transactional
     public List<TrainQueryResp> queryAll(){
         List<Train> trainList = selectAll();
-
+        LOG.info("再查一次");
+        trainList = selectAll();
         return BeanUtil.copyToList(trainList, TrainQueryResp.class);
     }
 
@@ -119,12 +122,14 @@ public class TrainService {
      * 查询所有列车，直接获得数据库的信息
      * @return
      */
+//    事务让mybatis的一级缓存生效
+//    @Transactional
     public List<Train> selectAll() {
         TrainExample trainExample = new TrainExample();
 
         trainExample.setOrderByClause("code asc");
         TrainExample.Criteria criteria = trainExample.createCriteria();
-
+//        trainMapper.selectByExample(trainExample);
         return trainMapper.selectByExample(trainExample);
     }
 }
