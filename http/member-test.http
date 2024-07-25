@@ -1,6 +1,5 @@
-GET http://localhost:8000/member/member/hello
+GET http://localhost:8001/member/test
 Accept: application/json
-token: 132
 ###
 
 GET http://localhost:8000/member/member/count
