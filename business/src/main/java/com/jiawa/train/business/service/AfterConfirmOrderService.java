@@ -1,8 +1,11 @@
 package com.jiawa.train.business.service;
 
+import com.jiawa.train.business.domain.ConfirmOrder;
 import com.jiawa.train.business.domain.DailyTrainSeat;
 import com.jiawa.train.business.domain.DailyTrainTicket;
+import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
 import com.jiawa.train.business.feign.MemberFeign;
+import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.mapper.customer.DailyTrainTicketMapperCustomer;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
@@ -28,6 +31,8 @@ public class AfterConfirmOrderService {
     private DailyTrainTicketMapperCustomer dailyTrainTicketMapperCustomer;
     @Resource
     private MemberFeign memberFeign;
+    @Resource
+    private ConfirmOrderMapper confirmOrderMapper;
 
     /**
      * 确认订单后处理
@@ -44,7 +49,7 @@ public class AfterConfirmOrderService {
     更新确认订单表
 */
     @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets) {
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) {
 
         // 座位表售卖情况修改，更新部分数据库中部分字段
         for (int j = 0; j < finalSeatList.size(); j++) {
@@ -54,8 +59,8 @@ public class AfterConfirmOrderService {
             sellSeat.setId(dailyTrainSeat.getId());
             sellSeat.setSell(dailyTrainSeat.getSell());
             sellSeat.setUpdateTime(new Date());
-            // 座位表售卖情况修改，更新部分数据库中部分字段
             dailyTrainSeatMapper.updateByPrimaryKeySelective(sellSeat);
+            // 座位表售卖情况修改，更新部分数据库中部分字段
 
             // 余票详情表修改余票
             // 影响的库存：未售卖的余票中和本次购买区间有交集的余票
@@ -93,7 +98,9 @@ public class AfterConfirmOrderService {
                     maxStartIndex,
                     minEndIndex,
                     maxEndIndex);
+            // 余票详情表修改余票
 
+            // 为会员增加购票记录
             MemberTicketReq memberTicketReq = new MemberTicketReq();
             memberTicketReq.setMemberId(LoginMemberContext.getMemberId());
             memberTicketReq.setPassengerId(tickets.get(j).getPassengerId());
@@ -110,11 +117,15 @@ public class AfterConfirmOrderService {
             memberTicketReq.setSeatType(dailyTrainSeat.getSeatType());
             CommonResp<Object> commonResp = memberFeign.save(memberTicketReq);
             LOG.info("调用member接口，返回：{}", commonResp);
+            // 为会员增加购票记录
 
+            // 更新确认订单表
+            ConfirmOrder confirmOrderForUpdate = new ConfirmOrder();
+            confirmOrderForUpdate.setId(confirmOrder.getId());
+            confirmOrderForUpdate.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
+            confirmOrderForUpdate.setUpdateTime(new Date());
+            confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);
+            // 更新确认订单表
         }
-
-
     }
-
-
 }

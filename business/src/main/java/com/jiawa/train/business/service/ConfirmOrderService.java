@@ -116,6 +116,7 @@ public class ConfirmOrderService {
         String start = req.getStart();
         String end = req.getEnd();
         List<ConfirmOrderTicketReq> confirmOrderTicketReqList = req.getTickets();
+
         // 保存确认订单，状态初始
         ConfirmOrder confirmOrder = new ConfirmOrder();
         confirmOrder.setId(SnowUtil.getSnowflakeNextId());
@@ -130,18 +131,19 @@ public class ConfirmOrderService {
         confirmOrder.setCreateTime(now);
         confirmOrder.setUpdateTime(now);
         confirmOrderMapper.insert(confirmOrder);
+        // 保存确认订单，状态初始
 
         // 查询余票记录，得到真实的库存
         DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
         LOG.info("余票记录：{}", dailyTrainTicket);
-        // 扣减余票库存，判断余票是否足够
+        // 扣减余票库存，用于判断余票是否足够
         reduceTicket(confirmOrderTicketReqList, dailyTrainTicket);
 
         // 计算相对于选定的第一个座位的偏移值（可以选座时）
         // 根据第一张票的座位类型是否为空，判断能否选座
         ConfirmOrderTicketReq ticketReq = confirmOrderTicketReqList.get(0);
 
-        //            定义一个变量，表示最终选座结果
+        // 定义一个变量，表示最终选座结果
         List<DailyTrainSeat> finalSeatList = new ArrayList<>();
 
         if (StrUtil.isNotBlank(ticketReq.getSeat())) {
@@ -204,12 +206,13 @@ public class ConfirmOrderService {
 
         LOG.info("最终选座结果：{}", finalSeatList);
 
-//          选中座位后事务处理
-//              座位表售卖情况修改
-        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, confirmOrderTicketReqList);
-    //          余票详情表修改余票
-    //          为会员增加购票记录
-    //          更新确认订单表
+        // 选中座位后事务处理
+        //     座位表售卖情况修改
+        //     余票详情表修改余票
+        //     为会员增加购票记录
+        //     更新确认订单表
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, confirmOrderTicketReqList, confirmOrder);
+
     }
 
     /**
@@ -226,7 +229,7 @@ public class ConfirmOrderService {
                 获取所有车厢；
                 遍历每个车厢，获取这个车厢下的座位数据，设置座位；*/
         // 选座过程中，将可能的选座结果保存到这个变量中
-        List<DailyTrainSeat> getSeatList = new ArrayList<>();
+        List<DailyTrainSeat> getSeatList;
 
         // 根据座位类型查询对应的车厢
         List<DailyTrainCarriage> dailyTrainCarriages = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
@@ -339,9 +342,7 @@ public class ConfirmOrderService {
                 finalSeatList.addAll(getSeatList);
                 return;
             }
-
         }
-
     }
 
     /**
@@ -352,7 +353,7 @@ public class ConfirmOrderService {
         只要这个有1，表明这个区间已售；
 
         选中后，计算购买后的sell，假如本次购买1~4，则为01110，
-        与原来安慰做与运算*/
+        与原来按位做或运算*/
 
 //        得到当前座位的所有站购买信息
         String sell = dailyTrainSeat.getSell();
@@ -381,11 +382,9 @@ public class ConfirmOrderService {
             dailyTrainSeat.setSell(newSell);
             return true;
         }
-
-
     }
 
-    // 扣减余票库存，判断余票是否足够
+    // 扣减余票库存
     private void reduceTicket(List<ConfirmOrderTicketReq> confirmOrderTicketReqList, DailyTrainTicket
             dailyTrainTicket) {
         for (ConfirmOrderTicketReq ticketReq : confirmOrderTicketReqList) {
