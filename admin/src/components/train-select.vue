@@ -39,7 +39,7 @@ export default defineComponent({
     /**
      * 查询所有的车次，用于车次下拉框
      */
-    /*const queryAllTrain = () => {
+    const queryTrainCode = () => {
       let list = SessionStorage.get(SESSION_ALL_TRAIN);
       if (Tool.isNotEmpty(list)) {
         console.log("queryAllTrain 读取缓存");
@@ -56,8 +56,8 @@ export default defineComponent({
           }
         });
       }
-    };*/
-    const queryTrainCode = () => {
+    };
+    /*const queryTrainCode = () => {
       axios.get("/business/admin/train/query-all",).then((response) => {
         // loading.value = false;
         let data = response.data;
@@ -67,7 +67,7 @@ export default defineComponent({
           notification.error({description: data.message});
         }
       });
-    };
+    };*/
 
     /**
      * 车次下拉框筛选
