@@ -1,0 +1,6 @@
+GET http://localhost:8000/business/admin/daily-train-ticket/query-list?page=2&size=5&trainCode=G1
+Accept: application/json
+
+
+
+
