@@ -12,11 +12,12 @@ import com.jiawa.train.business.req.ConfirmOrderTicketReq;
 import com.jiawa.train.context.LoginMemberContext;
 import com.jiawa.train.req.MemberTicketReq;
 import com.jiawa.train.resp.CommonResp;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -48,9 +49,9 @@ public class AfterConfirmOrderService {
     为会员增加购票记录
     更新确认订单表
 */
-    @Transactional
+    @GlobalTransactional
     public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) {
-
+        LOG.info("afterDoConfirm：seata全局事务ID:{}", RootContext.getXID());
         // 座位表售卖情况修改，更新部分数据库中部分字段
         for (int j = 0; j < finalSeatList.size(); j++) {
             DailyTrainSeat dailyTrainSeat = finalSeatList.get(j);

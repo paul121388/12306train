@@ -12,7 +12,8 @@ public enum BusinessExceptionEnum {
     BUSSINESS_TRAIN_CODE_UNIQUE_ERROR("车次编号重复"),
 
 
-    BUSSINESS_ORDER_TICKET_COUNT_ERROR("余票不足");
+    BUSSINESS_ORDER_TICKET_COUNT_ERROR("余票不足"),
+    CONFIRM_ORDER_EXCEPTION("服务器忙，请稍后重试");
 
     private String desc;
 

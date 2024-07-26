@@ -1,7 +1,9 @@
 package com.jiawa.train.controller;
 
-import com.jiawa.train.resp.CommonResp;
+import cn.hutool.core.util.StrUtil;
 import com.jiawa.train.exception.BusinessException;
+import com.jiawa.train.resp.CommonResp;
+import io.seata.core.context.RootContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -16,6 +18,7 @@ public class ControllerExceptionHandler {
 
     /**
      * 业务异常处理
+     *
      * @param e
      * @return
      */
@@ -31,6 +34,7 @@ public class ControllerExceptionHandler {
 
     /**
      * 校验异常处理
+     *
      * @param e
      * @return
      */
@@ -47,12 +51,18 @@ public class ControllerExceptionHandler {
 
     /**
      * 通用异常处理
+     *
      * @param e
      * @return
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public CommonResp exceptionHandler(Exception e) {
+    public CommonResp exceptionHandler(Exception e) throws Exception {
+        LOG.info("exceptionHandler：seata全局事务ID:{}", RootContext.getXID());
+// 如果全局事务出现异常，直接将异常抛出，让调用方回滚事务
+        if(StrUtil.isNotBlank((RootContext.getXID()))){
+            throw e;
+        }
         CommonResp commonResp = new CommonResp();
         LOG.error("系统异常", e);
         commonResp.setSuccess(false);
