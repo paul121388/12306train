@@ -50,7 +50,7 @@ public class AfterConfirmOrderService {
     更新确认订单表
 */
     @GlobalTransactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) {
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) throws Exception {
         LOG.info("afterDoConfirm：seata全局事务ID:{}", RootContext.getXID());
         // 座位表售卖情况修改，更新部分数据库中部分字段
         for (int j = 0; j < finalSeatList.size(); j++) {
@@ -127,6 +127,10 @@ public class AfterConfirmOrderService {
             confirmOrderForUpdate.setUpdateTime(new Date());
             confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);
             // 更新确认订单表
+
+            if(1 == 1) {
+                throw new Exception("AfterConfirmOrderService: 模拟异常!!");
+            }
         }
     }
 }
