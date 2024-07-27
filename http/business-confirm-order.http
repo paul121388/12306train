@@ -1,0 +1,26 @@
+POST http://localhost:8000/business/confirm-order/do
+Content-Type: application/json
+token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjE5ODQzMzUsIm1vYmlsZSI6IjEzMDAwMDAwMDAwIiwiaWQiOjE4MDk4OTEyNTY5Mjc2NTM4ODgsImV4cCI6MTcyMjA3MDczNSwiaWF0IjoxNzIxOTg0MzM1fQ.ovMqouFfT5uMSw_S80sGzNXDmpEDKYtxPIpuFLqErSA
+
+{
+  "dailyTrainTicketId": 1816104799943397376,
+  "date": 1721664000000,
+  "end": "拉萨",
+  "start": "长沙南",
+  "tickets": [
+    {
+      "passengerId": 1812406689392103400,
+      "passengerIdCard": "20247141639",
+      "passengerName": "test20247141639",
+      "passengerType": "2",
+      "seatTypeCode": "2"
+    }
+  ],
+  "trainCode": "G1"
+}
+
+###
+
+GET http://localhost:8000/business/confirm-order/query-line-count/1662452972099080192
+Content-Type: application/json
+token: {{token}}

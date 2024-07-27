@@ -13,7 +13,6 @@ import com.jiawa.train.context.LoginMemberContext;
 import com.jiawa.train.req.MemberTicketReq;
 import com.jiawa.train.resp.CommonResp;
 import io.seata.core.context.RootContext;
-import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public class AfterConfirmOrderService {
     为会员增加购票记录
     更新确认订单表
 */
-    @GlobalTransactional
+//    @GlobalTransactional
     public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) throws Exception {
         LOG.info("afterDoConfirm：seata全局事务ID:{}", RootContext.getXID());
         // 座位表售卖情况修改，更新部分数据库中部分字段
@@ -128,9 +127,9 @@ public class AfterConfirmOrderService {
             confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);
             // 更新确认订单表
 
-            if(1 == 1) {
-                throw new Exception("AfterConfirmOrderService: 模拟异常!!");
-            }
+//            if(1 == 1) {
+//                throw new Exception("AfterConfirmOrderService: 模拟异常!!");
+//            }
         }
     }
 }

@@ -27,11 +27,13 @@ import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConfirmOrderService {
@@ -47,6 +49,9 @@ public class ConfirmOrderService {
     private DailyTrainSeatService dailyTrainSeatService;
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
 
     /**
      * 1.新增乘客  2.修改乘客
@@ -54,6 +59,7 @@ public class ConfirmOrderService {
      * @param req
      */
     public void save(ConfirmOrderDoReq req) {
+
         DateTime now = DateTime.now();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
         if (ObjectUtil.isNull(confirmOrder.getId())) {
@@ -109,6 +115,15 @@ public class ConfirmOrderService {
     }
 
     public void doConfirm(ConfirmOrderDoReq req) {
+        String lockKey = req.getDate() + req.getTrainCode();
+        Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        if (setIfAbsent) {
+            LOG.info("恭喜抢到锁了! lockKey:{}", lockKey);
+        } else {
+            LOG.info("抢锁失败! lockKey:{}", lockKey);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
+
         DateTime now = DateTime.now();
         // 省略数据校验（req中数据合法性校验）， 业务校验，比如今天不能买昨天的票，同乘客同车次不同重复买票
         Date date = req.getDate();
@@ -190,8 +205,8 @@ public class ConfirmOrderService {
             // 不可选座时
             LOG.info("不可选座");
 
-            /*进行选座：
-                循环每张票，获取这张票的座位类型*/
+                /*进行选座：
+                    循环每张票，获取这张票的座位类型*/
             for (ConfirmOrderTicketReq confirmOrderTicketReq : confirmOrderTicketReqList) {
                 getSeat(finalSeatList,
                         date,
@@ -214,9 +229,11 @@ public class ConfirmOrderService {
         try {
             afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, confirmOrderTicketReqList, confirmOrder);
         } catch (Exception e) {
-            LOG.error("保存购票信息失败",e);
+            LOG.error("保存购票信息失败", e);
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
+        LOG.info("选座结束,删除分布式锁");
+        stringRedisTemplate.delete(lockKey);
 
     }
 
