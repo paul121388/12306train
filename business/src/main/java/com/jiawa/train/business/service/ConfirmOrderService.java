@@ -58,6 +58,8 @@ public class ConfirmOrderService {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private RedissonClient redissonClient;
+    @Resource
+    private SkTokenService skTokenService;
 
 
     /**
@@ -124,13 +126,21 @@ public class ConfirmOrderService {
     @SentinelResource(value = "doConfirm", blockHandler = "doConfirmBlockHandler")
     public void doConfirm(ConfirmOrderDoReq req) {
         String lockKey = req.getDate() + req.getTrainCode();
-//        Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-//        if (setIfAbsent) {
-//            LOG.info("恭喜抢到锁了! lockKey:{}", lockKey);
-//        } else {
-//            LOG.info("抢锁失败! lockKey:{}", lockKey);
-//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-//        }
+        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMemberId());
+        if (validSkToken) {
+            LOG.info("令牌校验通过");
+        } else {
+            LOG.info("令牌校验不通过");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN);
+        }
+
+        Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        if (setIfAbsent) {
+            LOG.info("恭喜抢到锁了! lockKey:{}", lockKey);
+        } else {
+            LOG.info("抢锁失败! lockKey:{}", lockKey);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
         RLock lock = null;
         try {
             lock = redissonClient.getLock(lockKey);
