@@ -150,4 +150,18 @@ public class DailyTrainStationService {
         }
     }
 
+    public int countStation(Date date, String trainCode) {
+        DailyTrainStationExample dailyTrainStationExample = new DailyTrainStationExample();
+        dailyTrainStationExample
+                .createCriteria()
+                .andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode);
+        // 假如结果为0，表明没有这种类型的座位，应该特殊处理，返回-1
+        long l = dailyTrainStationMapper.countByExample(dailyTrainStationExample);
+        if (l == 0) {
+            return -1;
+        }
+        return (int) l;
+    }
+
 }

@@ -42,6 +42,9 @@ public class DailyTrainService {
     private DailyTrainSeatService dailyTrainSeatService;
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+    @Resource
+    private SkTokenService skTokenService;
+
     /**
      * 1.新增列车  2.修改列车
      *
@@ -142,7 +145,7 @@ public class DailyTrainService {
     @Transactional
     public void genDailyTrain(Date date, Train train) {
         // 打印日志
-        LOG.info("开始生成日期【{}】车次【{}】数据", DateUtil.formatDate(date) , train.getCode());
+        LOG.info("开始生成日期【{}】车次【{}】数据", DateUtil.formatDate(date), train.getCode());
         // 考虑重复生成
         // 首先将数据库中对应车次数据清空，日期和车次
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
@@ -175,7 +178,10 @@ public class DailyTrainService {
 
         // 生成date的编号为code的车次余票数据
         dailyTrainTicketService.genDaily(dailyTrain, date, train.getCode());
+
+        // 生成date的编号为code的车次余票数据
+        skTokenService.genDaily(date, train.getCode());
         // 打印日志
-        LOG.info("生成日期【{}】车次【{}】数据结束", DateUtil.formatDate(date) , train.getCode());
+        LOG.info("生成日期【{}】车次【{}】数据结束", DateUtil.formatDate(date), train.getCode());
     }
 }

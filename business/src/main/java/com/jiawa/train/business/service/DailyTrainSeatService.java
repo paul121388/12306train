@@ -150,13 +150,17 @@ public class DailyTrainSeatService {
         }
     }
 
+    public int countSeat(Date date, String trainCode) {
+        return countSeat(date, trainCode, null);
+    }
+
     public int countSeat(Date date, String trainCode, SeatTypeEnum seatType) {
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample
-                .createCriteria()
-                .andDateEqualTo(date)
-                .andTrainCodeEqualTo(trainCode)
-                .andSeatTypeEqualTo(seatType.getCode());
+        DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
+        criteria.andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+        if(ObjectUtil.isNotNull(seatType)){
+            criteria.andSeatTypeEqualTo(seatType.getCode());
+        }
         // 假如结果为0，表明没有这种类型的座位，应该特殊处理，返回-1
         long l = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
         if (l == 0) {
@@ -164,6 +168,8 @@ public class DailyTrainSeatService {
         }
         return (int) l;
     }
+
+
 
     public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode, Integer carriageIndex) {
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
