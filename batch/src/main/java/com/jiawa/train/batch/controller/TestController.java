@@ -18,7 +18,7 @@ public class TestController {
     public String test() {
         String temp = businessFeign.hello();
         LOG.info("test: {}", temp);
-        return "Hello World! Batch!";
+        return "Hello World! Batch!" + temp;
     }
 
     // 调用businnessFeign中的
