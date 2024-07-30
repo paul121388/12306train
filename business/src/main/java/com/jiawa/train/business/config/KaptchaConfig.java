@@ -21,7 +21,7 @@ public class KaptchaConfig {
         properties.setProperty("kaptcha.textproducer.font.size", "20");
         properties.setProperty("kaptcha.session.key", "code");
         properties.setProperty("kaptcha.textproducer.char.length", "4");
-        properties.setProperty("kaptcha.textproducer.font.names", "Arial");
+        properties.setProperty("kaptcha.textproducer.font.names", "Arial, Courier New");
         properties.setProperty("kaptcha.noise.color", "255,96,0");
         properties.setProperty("kaptcha.noise.impl", "com.google.code.kaptcha.impl.NoNoise");
 //        properties.setProperty("kaptcha.obscurificator.impl", "com.google.code.kaptcha.impl.WaterRipple");
