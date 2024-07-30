@@ -46,6 +46,8 @@ public class KaptchaController {
             return;
         }
 
+
+
         // 定义response输出类型为image/jpeg类型，使用response输出流输出图片的byte数组
         byte[] captchaChallengeAsJpeg = jpegOutputStream.toByteArray();
         httpServletResponse.setHeader("Cache-Control", "no-store");

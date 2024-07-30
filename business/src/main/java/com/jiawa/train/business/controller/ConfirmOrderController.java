@@ -3,6 +3,7 @@ package com.jiawa.train.business.controller;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;
+import com.jiawa.train.business.service.BeforeConfirmOrderService;
 import com.jiawa.train.business.service.ConfirmOrderService;
 import com.jiawa.train.exception.BusinessExceptionEnum;
 import com.jiawa.train.resp.CommonResp;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/confirm-order")
 public class ConfirmOrderController<businessLoginReq> {
     @Resource
-    private ConfirmOrderService confirmOrderService;
+    private BeforeConfirmOrderService beforeConfirmOrderService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfirmOrderService.class);
 
@@ -34,7 +35,7 @@ public class ConfirmOrderController<businessLoginReq> {
     // 接口资源名称不要和接口路径一致，会导致限流后走不到降级方法中
     @SentinelResource(value = "confirmOrderDo", blockHandler = "doConfirmBlockHandler")
     public CommonResp<Object> doConfirm(@Valid @RequestBody ConfirmOrderDoReq businessRegisterReq) {
-        confirmOrderService.doConfirm(businessRegisterReq);
+        beforeConfirmOrderService.doConfirm(businessRegisterReq);
         return new CommonResp<>();
     }
 

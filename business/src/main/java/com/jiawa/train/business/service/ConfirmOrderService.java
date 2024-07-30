@@ -14,7 +14,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
-import com.jiawa.train.business.enums.RedisKeyPreEnum;
 import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.enums.SeatTypeEnum;
 import com.jiawa.train.business.mapper.ConfirmOrderMapper;
@@ -28,7 +27,6 @@ import com.jiawa.train.exception.BusinessExceptionEnum;
 import com.jiawa.train.resp.PageResp;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +37,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConfirmOrderService {
@@ -126,16 +123,16 @@ public class ConfirmOrderService {
 
     @SentinelResource(value = "doConfirm", blockHandler = "doConfirmBlockHandler")
     public void doConfirm(ConfirmOrderDoReq req) {
-        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + req.getDate() + "-" + req.getTrainCode();
+//        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + req.getDate() + "-" + req.getTrainCode();
 
         // 令牌校验
-        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMemberId());
-        if (validSkToken) {
-            LOG.info("令牌校验通过");
-        } else {
-            LOG.info("令牌校验不通过");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
-        }
+//        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMemberId());
+//        if (validSkToken) {
+//            LOG.info("令牌校验通过");
+//        } else {
+//            LOG.info("令牌校验不通过");
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
+//        }
 
 //        Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
 //        if (setIfAbsent) {
@@ -144,31 +141,31 @@ public class ConfirmOrderService {
 //            LOG.info("抢锁失败! lockKey:{}", lockKey);
 //            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
 //        }
-        RLock lock = null;
-        try {
-            // 获取锁
-            lock = redissonClient.getLock(lockKey);
-            /**
-             waitTime – the maximum time to acquire the lock 等待获取锁时间(最大尝试获得锁的时间)，超时返回false
-             leaseTime – lease time 锁时长，即n秒后自动释放锁
-             time unit – time unit 时间单位
-             */
-            // boolean tryLock = lock.tryLock(30, 10, TimeUnit.SECONDS); // 不带看门狗
-            // 尝试上锁
-            boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
-            if (tryLock) {
-                LOG.info("恭喜，抢到锁了！");
-                // 可以把下面这段放开，只用一个线程来测试，看看redisson的看门狗效果
-                // for (int i = 0; i < 30; i++) {
-                //     Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
-                //     LOG.info("锁过期时间还有：{}", expire);
-                //     Thread.sleep(1000);
-                // }
-            } else {
-                // 只是没抢到锁，并不知道票抢完了没，所以提示稍候再试
-                LOG.info("很遗憾，没抢到锁");
-                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-            }
+//        RLock lock = null;
+//        try {
+//            // 获取锁
+//            lock = redissonClient.getLock(lockKey);
+//            /**
+//             waitTime – the maximum time to acquire the lock 等待获取锁时间(最大尝试获得锁的时间)，超时返回false
+//             leaseTime – lease time 锁时长，即n秒后自动释放锁
+//             time unit – time unit 时间单位
+//             */
+//            // boolean tryLock = lock.tryLock(30, 10, TimeUnit.SECONDS); // 不带看门狗
+//            // 尝试上锁
+//            boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
+//            if (tryLock) {
+//                LOG.info("恭喜，抢到锁了！");
+//                // 可以把下面这段放开，只用一个线程来测试，看看redisson的看门狗效果
+//                // for (int i = 0; i < 30; i++) {
+//                //     Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
+//                //     LOG.info("锁过期时间还有：{}", expire);
+//                //     Thread.sleep(1000);
+//                // }
+//            } else {
+//                // 只是没抢到锁，并不知道票抢完了没，所以提示稍候再试
+//                LOG.info("很遗憾，没抢到锁");
+//                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//            }
 
             DateTime now = DateTime.now();
             // 省略数据校验（req中数据合法性校验）， 业务校验，比如今天不能买昨天的票，同乘客同车次不同重复买票
@@ -278,14 +275,14 @@ public class ConfirmOrderService {
                 LOG.error("保存购票信息失败", e);
                 throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
             }
-        } catch (InterruptedException e) {
-            LOG.error("购票异常", e);
-        } finally {
-            LOG.info("购票流程结束，释放锁！");
-            if (null != lock && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
-        }
+//        } catch (InterruptedException e) {
+//            LOG.error("购票异常", e);
+//        } finally {
+//            LOG.info("购票流程结束，释放锁！");
+//            if (null != lock && lock.isHeldByCurrentThread()) {
+//                lock.unlock();
+//            }
+//        }
 //        LOG.info("选座结束,删除分布式锁");
 //        stringRedisTemplate.delete(lockKey);
     }

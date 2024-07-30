@@ -54,6 +54,11 @@ public class ConfirmOrderDoReq {
     @NotEmpty(message = "【车票】不能为空")
     private List<ConfirmOrderTicketReq> tickets;
 
+//    @NotBlank(message = "【图片验证码】不能为空")
+//    private String imageCode;
+//
+//    @NotBlank(message = "【图片验证码token】不能为空")
+//    private String imageCodeToken;
 
 
     public Long getMemberId() {
