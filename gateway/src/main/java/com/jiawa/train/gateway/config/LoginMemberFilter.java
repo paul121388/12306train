@@ -27,7 +27,8 @@ public class LoginMemberFilter implements GlobalFilter {
                 || path.contains("/batch")
                 || path.contains("/member/hello")
                 || path.contains("/member/member/login")
-                || path.contains("/member/member/send-code")) {
+                || path.contains("/member/member/send-code")
+                || path.contains("/business/kaptcha")) {
             LOG.info("不需要登录校验: {}", path);
             return chain.filter(exchange);
         } else {
