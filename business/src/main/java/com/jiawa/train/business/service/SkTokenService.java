@@ -8,6 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.SkToken;
 import com.jiawa.train.business.domain.SkTokenExample;
+import com.jiawa.train.business.enums.RedisKeyPreEnum;
 import com.jiawa.train.business.mapper.SkTokenMapper;
 import com.jiawa.train.business.mapper.customer.SkTokenMapperCust;
 import com.jiawa.train.business.req.SkTokenQueryReq;
@@ -18,10 +19,12 @@ import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class SkTokenService {
@@ -35,6 +38,9 @@ public class SkTokenService {
     private DailyTrainStationService dailyTrainStationService;
     @Resource
     private SkTokenMapperCust skTokenMapperCust;
+    @Resource
+    private RedisTemplate redisTemplate;
+
 
     /**
      * 1.新增乘客  2.修改乘客
@@ -131,7 +137,7 @@ public class SkTokenService {
         int countStation = dailyTrainStationService.countStation(date, trainCode);
         LOG.info("车次【{}】的站数：{}", trainCode, countStation);
 
-        int count = (int) (countSeat * countStation * 3 / 4);
+        int count = (int) (countSeat * countStation);
         LOG.info("车次【{}】的令牌总数：{}", trainCode, countStation);
         skToken.setCount(count);
 
@@ -150,15 +156,15 @@ public class SkTokenService {
 
         // 需要去掉这段，否则发布生产后，体验多人排队功能时，会因拿不到锁而返回：等待5秒，加入20人时，只有第1次循环能拿到锁
         // if (!env.equals("dev")) {
-        //     // 先获取令牌锁，再校验令牌余量，防止机器人抢票，lockKey就是令牌，用来表示【谁能做什么】的一个凭证
-        //     String lockKey = RedisKeyPreEnum.SK_TOKEN + "-" + DateUtil.formatDate(date) + "-" + trainCode + "-" + memberId;
-        //     Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-        //     if (Boolean.TRUE.equals(setIfAbsent)) {
-        //         LOG.info("恭喜，抢到令牌锁了！lockKey：{}", lockKey);
-        //     } else {
-        //         LOG.info("很遗憾，没抢到令牌锁！lockKey：{}", lockKey);
-        //         return false;
-        //     }
+             // 先获取令牌锁，再校验令牌余量，防止机器人抢票，lockKey就是令牌，用来表示【谁能做什么】的一个凭证
+             String lockKey = RedisKeyPreEnum.SK_TOKEN +"-" + DateUtil.formatDate(date) + "-" + trainCode + "-" + memberId; //
+             Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+             if (Boolean.TRUE.equals(setIfAbsent)) {
+                 LOG.info("恭喜，抢到令牌锁了！lockKey：{}", lockKey);
+             } else {
+                 LOG.info("很遗憾，没抢到令牌锁！lockKey：{}", lockKey);
+                 return false;
+             }
         // }
 
 //        String skTokenCountKey = RedisKeyPreEnum.SK_TOKEN_COUNT + "-" + DateUtil.formatDate(date) + "-" + trainCode;

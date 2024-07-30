@@ -14,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jiawa.train.business.domain.*;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
+import com.jiawa.train.business.enums.RedisKeyPreEnum;
 import com.jiawa.train.business.enums.SeatColEnum;
 import com.jiawa.train.business.enums.SeatTypeEnum;
 import com.jiawa.train.business.mapper.ConfirmOrderMapper;
@@ -125,24 +126,27 @@ public class ConfirmOrderService {
 
     @SentinelResource(value = "doConfirm", blockHandler = "doConfirmBlockHandler")
     public void doConfirm(ConfirmOrderDoReq req) {
-        String lockKey = req.getDate() + req.getTrainCode();
+        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + req.getDate() + "-" + req.getTrainCode();
+
+        // 令牌校验
         boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getMemberId());
         if (validSkToken) {
             LOG.info("令牌校验通过");
         } else {
             LOG.info("令牌校验不通过");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
         }
 
-        Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-        if (setIfAbsent) {
-            LOG.info("恭喜抢到锁了! lockKey:{}", lockKey);
-        } else {
-            LOG.info("抢锁失败! lockKey:{}", lockKey);
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-        }
+//        Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+//        if (setIfAbsent) {
+//            LOG.info("恭喜抢到锁了! lockKey:{}", lockKey);
+//        } else {
+//            LOG.info("抢锁失败! lockKey:{}", lockKey);
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//        }
         RLock lock = null;
         try {
+            // 获取锁
             lock = redissonClient.getLock(lockKey);
             /**
              waitTime – the maximum time to acquire the lock 等待获取锁时间(最大尝试获得锁的时间)，超时返回false
@@ -150,6 +154,7 @@ public class ConfirmOrderService {
              time unit – time unit 时间单位
              */
             // boolean tryLock = lock.tryLock(30, 10, TimeUnit.SECONDS); // 不带看门狗
+            // 尝试上锁
             boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
             if (tryLock) {
                 LOG.info("恭喜，抢到锁了！");
@@ -493,7 +498,7 @@ public class ConfirmOrderService {
         }
     }
 
-    public void doConfirmBlockHandler(ConfirmOrderDoReq req, BlockException e){
+    public void doConfirmBlockHandler(ConfirmOrderDoReq req, BlockException e) {
         LOG.info("购票请求被限流");
         throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_FLOW_EXCEPTION);
     }
