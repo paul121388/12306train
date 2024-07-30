@@ -20,7 +20,7 @@ import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -40,7 +40,7 @@ public class SkTokenService {
     @Resource
     private SkTokenMapperCust skTokenMapperCust;
     @Resource
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
 
     /**
@@ -159,7 +159,7 @@ public class SkTokenService {
         // if (!env.equals("dev")) {
              // 先获取令牌锁，再校验令牌余量，防止机器人抢票，lockKey就是令牌，用来表示【谁能做什么】的一个凭证
              String lockKey = RedisKeyPreEnum.SK_TOKEN +"-" + DateUtil.formatDate(date) + "-" + trainCode + "-" + memberId; //
-             Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+             Boolean setIfAbsent = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
              if (Boolean.TRUE.equals(setIfAbsent)) {
                  LOG.info("恭喜，抢到令牌锁了！lockKey：{}", lockKey);
              } else {
@@ -197,16 +197,16 @@ public class SkTokenService {
          *    将键值对放入缓存中
          */
         String skTokenCountKey = RedisKeyPreEnum.SK_TOKEN_COUNT + "-" + DateUtil.formatDate(date) + "-" + trainCode;
-        Object skTokenCount = redisTemplate.opsForValue().get(skTokenCountKey);
+        Object skTokenCount = stringRedisTemplate.opsForValue().get(skTokenCountKey);
         if (skTokenCount != null) {
             LOG.info("缓存中有该车次令牌大闸的key：{}", skTokenCountKey);
-            Long count = redisTemplate.opsForValue().decrement(skTokenCountKey, 1);
+            Long count = stringRedisTemplate.opsForValue().decrement(skTokenCountKey, 1L);
             if (count < 0L) {
                 LOG.error("获取令牌失败：{}", skTokenCountKey);
                 return false;
             } else {
                 LOG.info("获取令牌后，令牌余数：{}", count);
-                redisTemplate.expire(skTokenCountKey, 60, TimeUnit.SECONDS);
+                stringRedisTemplate.expire(skTokenCountKey, 60L, TimeUnit.SECONDS);
                 // 每获取5个令牌更新一次数据库
                 if (count % 5 == 0) {
                     skTokenMapperCust.decrease(date, trainCode, 5);
@@ -236,7 +236,7 @@ public class SkTokenService {
             skToken.setCount(count);
             LOG.info("将该车次令牌大闸放入缓存中，key: {}， count: {}", skTokenCountKey, count);
             // 不需要更新数据库，只要放缓存即可
-            redisTemplate.opsForValue().set(skTokenCountKey, String.valueOf(count), 60, TimeUnit.SECONDS);
+            stringRedisTemplate.opsForValue().set(skTokenCountKey, String.valueOf(count), 60, TimeUnit.SECONDS);
             // skTokenMapper.updateByPrimaryKey(skToken);
             return true;
         }
