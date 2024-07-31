@@ -11,16 +11,15 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/confirm-order")
 public class ConfirmOrderController<businessLoginReq> {
     @Resource
     private BeforeConfirmOrderService beforeConfirmOrderService;
+    @Resource
+    private ConfirmOrderService confirmOrderService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfirmOrderService.class);
 
@@ -37,6 +36,15 @@ public class ConfirmOrderController<businessLoginReq> {
     public CommonResp<String> doConfirm(@Valid @RequestBody ConfirmOrderDoReq businessRegisterReq) {
         Long id = beforeConfirmOrderService.doConfirm(businessRegisterReq);
         return new CommonResp<>(String.valueOf(id));
+    }
+
+    /**
+     * 增加排队查询接口，根据ID查询排队信息
+     */
+    @GetMapping("/query-line-count/{id}")
+    public CommonResp<Integer> queryLineCount(@PathVariable Long id) {
+        Integer count = confirmOrderService.queryLineCount(id);
+        return new CommonResp<>(count);
     }
 
     /**

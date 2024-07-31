@@ -574,4 +574,44 @@ public class ConfirmOrderService {
         LOG.info("购票请求被限流");
         throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_FLOW_EXCEPTION);
     }
+
+    /**
+     * 查询数据库中订单状态为INIT或PEDDING的订单，查询创建时间当前订单小的订单数量
+     *
+     * @param id
+     * @return
+     */
+    public Integer queryLineCount(Long id) {
+        /**
+         * 1. 根据订单的id查询这笔订单
+         * 2. 根据订单的状态，返回不同的结果
+         * 3. 假如结果为999，即上述两种状态
+         *      查询同一天，同一车次，创建时间当前订单小，两种状态的订单数量
+         */
+        ConfirmOrder confirmOrder = confirmOrderMapper.selectByPrimaryKey(id);
+        ConfirmOrderStatusEnum statusEnum = EnumUtil.getBy(ConfirmOrderStatusEnum::getCode, confirmOrder.getStatus());
+        int result = switch (statusEnum) {
+            case PENDING -> 0; // 排队0
+            case SUCCESS -> -1; // 成功
+            case FAILURE -> -2; // 失败
+            case EMPTY -> -3; // 无票
+            case CANCEL -> -4; // 取消
+            case INIT -> 999; // 需要查表得到实际排队数量
+        };
+
+        if (result == 999) {
+            ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+            confirmOrderExample.or().andDateEqualTo(confirmOrder.getDate())
+                    .andTrainCodeEqualTo(confirmOrder.getTrainCode())
+                    .andCreateTimeLessThan(confirmOrder.getCreateTime())
+                    .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+            confirmOrderExample.or().andDateEqualTo(confirmOrder.getDate())
+                    .andTrainCodeEqualTo(confirmOrder.getTrainCode())
+                    .andCreateTimeLessThan(confirmOrder.getCreateTime())
+                    .andStatusEqualTo(ConfirmOrderStatusEnum.PENDING.getCode());
+            return Math.toIntExact(confirmOrderMapper.countByExample(confirmOrderExample));
+        } else {
+            return result;
+        }
+    }
 }
