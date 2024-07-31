@@ -99,26 +99,41 @@
         <div style="color: #999999">提示：您可以选择{{ tickets.length }}个座位</div>
       </div>
       <br/>
-<!--      购票：{{ tickets }}-->
+      <!--      购票：{{ tickets }}-->
     </div>
   </a-modal>
 
   <!-- 第二层验证码 后端 -->
-<!--  <a-modal v-model:visible="imageCodeModalVisible" :title="null" :footer="null" :closable="false"-->
-<!--           style="top: 50px; width: 400px">-->
-<!--    <p style="text-align: center; font-weight: bold; font-size: 18px">-->
-<!--      使用服务端验证码削弱瞬时高峰<br/>-->
-<!--      防止机器人刷票-->
-<!--    </p>-->
-<!--    <p>-->
-<!--      <a-input v-model:value="imageCode" placeholder="图片验证码">-->
-<!--        <template #suffix>-->
-<!--          <img v-show="!!imageCodeSrc" :src="imageCodeSrc" alt="验证码" v-on:click="loadImageCode()"/>-->
-<!--        </template>-->
-<!--      </a-input>-->
-<!--    </p>-->
-<!--    <a-button type="danger" block @click="handleOk">输入验证码后开始购票</a-button>-->
-<!--  </a-modal>-->
+  <!--  <a-modal v-model:visible="imageCodeModalVisible" :title="null" :footer="null" :closable="false"-->
+  <!--           style="top: 50px; width: 400px">-->
+  <!--    <p style="text-align: center; font-weight: bold; font-size: 18px">-->
+  <!--      使用服务端验证码削弱瞬时高峰<br/>-->
+  <!--      防止机器人刷票-->
+  <!--    </p>-->
+  <!--    <p>-->
+  <!--      <a-input v-model:value="imageCode" placeholder="图片验证码">-->
+  <!--        <template #suffix>-->
+  <!--          <img v-show="!!imageCodeSrc" :src="imageCodeSrc" alt="验证码" v-on:click="loadImageCode()"/>-->
+  <!--        </template>-->
+  <!--      </a-input>-->
+  <!--    </p>-->
+  <!--    <a-button type="danger" block @click="handleOk">输入验证码后开始购票</a-button>-->
+  <!--  </a-modal>-->
+  <a-modal v-model:visible="lineModalVisible" title="排队购票" :footer="null" :maskClosable="false" :closable="false"
+           style="top: 50px; width: 400px">
+    <div class="book-line">
+<!--      <div v-show="confirmOrderLineCount < 0">-->
+        <loading-outlined/>
+        系统正在处理中...
+<!--      </div>-->
+<!--      <div v-show="confirmOrderLineCount >= 0">-->
+<!--        <loading-outlined/>-->
+<!--        您前面还有{{ confirmOrderLineCount }}位用户在购票，排队中，请稍候-->
+<!--      </div>-->
+    </div>
+<!--    <br/>-->
+<!--    <a-button type="danger" @click="onCancelOrder">取消购票</a-button>-->
+  </a-modal>
 
 </template>
 
@@ -175,7 +190,7 @@ export default defineComponent({
     const tickets = ref([]);
     const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
     const visible = ref(false);
-
+    const lineModalVisible = ref(false);
 
     // 勾选或去掉某个乘客时，在购票列表中加上或去掉一张表
     watch(() => passengerChecks.value, (newVal, oldVal) => {
@@ -347,9 +362,9 @@ export default defineComponent({
         let data = response.data;
         if (data.success) {
           notification.success({description: "下单成功！"});
-          // visible.value = false;
+          visible.value = false;
           // imageCodeModalVisible.value = false;
-          // lineModalVisible.value = true;
+          lineModalVisible.value = true;
           // confirmOrderId.value = data.content;
           // queryLineCount();
         } else {
@@ -395,6 +410,7 @@ export default defineComponent({
       chooseSeatObj,
       SEAT_COL_ARRAY,
       handleOk,
+      lineModalVisible
       // showImageCodeModal,
       // imageCodeModalVisible,
       // imageCodeToken,
