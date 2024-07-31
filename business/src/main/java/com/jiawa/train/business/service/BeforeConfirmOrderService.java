@@ -35,8 +35,6 @@ public class BeforeConfirmOrderService {
     private RocketMQTemplate rocketMQTemplate;
     @Resource
     private ConfirmOrderMapper confirmOrderMapper;
-    @Resource
-    private ConfirmOrderMQDto confirmOrderMQDto;
 
 
 
@@ -80,6 +78,7 @@ public class BeforeConfirmOrderService {
         // 发送MQ，排队购票
 //        req.setLogID(MDC.get("LOG_ID"));
 //        String reqJson = JSON.toJSONString(req);
+        ConfirmOrderMQDto confirmOrderMQDto = new ConfirmOrderMQDto();
         confirmOrderMQDto.setDate(date);
         confirmOrderMQDto.setTrainCode(trainCode);
         confirmOrderMQDto.setLogId(MDC.get("LOG_ID"));
