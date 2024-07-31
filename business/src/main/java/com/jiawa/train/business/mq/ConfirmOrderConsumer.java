@@ -1,6 +1,8 @@
 package com.jiawa.train.business.mq;// package com.jiawa.train.business.mq;
 
- import com.jiawa.train.business.service.ConfirmOrderService;
+import com.alibaba.fastjson.JSON;
+import com.jiawa.train.business.req.ConfirmOrderDoReq;
+import com.jiawa.train.business.service.ConfirmOrderService;
 import jakarta.annotation.Resource;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Service;
 //         MDC.put("LOG_ID", dto.getLogId());
          LOG.info("ROCKETMQ收到消息：{}", new String(body));
 //         confirmOrderService.doConfirm(dto);
+         ConfirmOrderDoReq confirmOrderDoReq = JSON.parseObject(new String(body), ConfirmOrderDoReq.class);
+         confirmOrderService.doConfirm(confirmOrderDoReq);
 
      }
  }

@@ -9,7 +9,6 @@ import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.business.mapper.DailyTrainSeatMapper;
 import com.jiawa.train.business.mapper.customer.DailyTrainTicketMapperCustomer;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
-import com.jiawa.train.context.LoginMemberContext;
 import com.jiawa.train.req.MemberTicketReq;
 import com.jiawa.train.resp.CommonResp;
 import jakarta.annotation.Resource;
@@ -101,7 +100,7 @@ public class AfterConfirmOrderService {
 
             // 为会员增加购票记录
             MemberTicketReq memberTicketReq = new MemberTicketReq();
-            memberTicketReq.setMemberId(LoginMemberContext.getMemberId());
+            memberTicketReq.setMemberId(confirmOrder.getMemberId());
             memberTicketReq.setPassengerId(tickets.get(j).getPassengerId());
             memberTicketReq.setPassengerName(tickets.get(j).getPassengerName());
             memberTicketReq.setTrainDate(dailyTrainTicket.getDate());
