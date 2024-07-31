@@ -124,7 +124,8 @@
     <div class="book-line">
 <!--      <div v-show="confirmOrderLineCount < 0">-->
         <loading-outlined/>
-        系统正在处理中...
+<!--        系统正在处理中...-->
+            确认订单：{{confirmOrderId}}，系统正在处理中
 <!--      </div>-->
 <!--      <div v-show="confirmOrderLineCount >= 0">-->
 <!--        <loading-outlined/>-->
@@ -191,6 +192,7 @@ export default defineComponent({
     const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
     const visible = ref(false);
     const lineModalVisible = ref(false);
+    const confirmOrderId = ref();
 
     // 勾选或去掉某个乘客时，在购票列表中加上或去掉一张表
     watch(() => passengerChecks.value, (newVal, oldVal) => {
@@ -365,7 +367,7 @@ export default defineComponent({
           visible.value = false;
           // imageCodeModalVisible.value = false;
           lineModalVisible.value = true;
-          // confirmOrderId.value = data.content;
+          confirmOrderId.value = data.content;
           // queryLineCount();
         } else {
           notification.error({description: data.message});
@@ -410,7 +412,8 @@ export default defineComponent({
       chooseSeatObj,
       SEAT_COL_ARRAY,
       handleOk,
-      lineModalVisible
+      lineModalVisible,
+      confirmOrderId
       // showImageCodeModal,
       // imageCodeModalVisible,
       // imageCodeToken,

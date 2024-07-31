@@ -34,9 +34,9 @@ public class ConfirmOrderController<businessLoginReq> {
     @PostMapping("/do")
     // 接口资源名称不要和接口路径一致，会导致限流后走不到降级方法中
     @SentinelResource(value = "confirmOrderDo", blockHandler = "doConfirmBlockHandler")
-    public CommonResp<Object> doConfirm(@Valid @RequestBody ConfirmOrderDoReq businessRegisterReq) {
-        beforeConfirmOrderService.doConfirm(businessRegisterReq);
-        return new CommonResp<>();
+    public CommonResp<String> doConfirm(@Valid @RequestBody ConfirmOrderDoReq businessRegisterReq) {
+        Long id = beforeConfirmOrderService.doConfirm(businessRegisterReq);
+        return new CommonResp<>(String.valueOf(id));
     }
 
     /**
