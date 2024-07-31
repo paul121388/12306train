@@ -11,6 +11,10 @@ import java.util.List;
 
 public class ConfirmOrderDoReq {
 
+    /**
+     * 流水号
+     */
+    private String logID;
 
     /**
      * 会员id
@@ -20,7 +24,7 @@ public class ConfirmOrderDoReq {
     /**
      * 日期
      */
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @NotNull(message = "【日期】不能为空")
     private Date date;
 
@@ -117,10 +121,19 @@ public class ConfirmOrderDoReq {
         this.tickets = tickets;
     }
 
+    public String getLogID() {
+        return logID;
+    }
+
+    public void setLogID(String logID) {
+        this.logID = logID;
+    }
+
     @Override
     public String toString() {
         return "ConfirmOrderDoReq{" +
-                "memberId=" + memberId +
+                "logID='" + logID + '\'' +
+                ", memberId=" + memberId +
                 ", date=" + date +
                 ", trainCode='" + trainCode + '\'' +
                 ", start='" + start + '\'' +

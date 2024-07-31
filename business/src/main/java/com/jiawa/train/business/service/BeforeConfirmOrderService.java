@@ -18,6 +18,7 @@ import jakarta.annotation.Resource;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -74,6 +75,7 @@ public class BeforeConfirmOrderService {
         // 保存确认订单，状态初始
 
         // 发送MQ，排队购票
+        req.setLogID(MDC.get("LOG_ID"));
         String reqJson = JSON.toJSONString(req);
         LOG.info("发送MQ，排队购票 reqJson:{}", reqJson);
         rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(), reqJson);
