@@ -111,12 +111,12 @@
         </hashTree>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="线程组">
-        <intProp name="ThreadGroup.num_threads">200</intProp>
+        <intProp name="ThreadGroup.num_threads">60</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器">
-          <stringProp name="LoopController.loops">1</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -134,7 +134,20 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;dailyTrainTicketId&quot;:1817906985832681472,&quot;date&quot;:1722182400000,&quot;end&quot;:&quot;拉萨&quot;,&quot;start&quot;:&quot;长沙南&quot;,&quot;tickets&quot;:[{&quot;passengerId&quot;:1811046148115402800,&quot;passengerIdCard&quot;:&quot;20247151629&quot;,&quot;passengerName&quot;:&quot;test20247151629&quot;,&quot;passengerType&quot;:&quot;1&quot;,&quot;seatTypeCode&quot;:&quot;2&quot;}],&quot;trainCode&quot;:&quot;G1&quot;}</stringProp>
+                <stringProp name="Argument.value">{&#xd;
+	&quot;dailyTrainTicketId&quot;:1818562496785682432,&#xd;
+	&quot;date&quot;:1722355200000,&#xd;
+	&quot;end&quot;:&quot;拉萨&quot;,&#xd;
+	&quot;start&quot;:&quot;长沙南&quot;,&#xd;
+	&quot;tickets&quot;:[{&#xd;
+		&quot;passengerId&quot;:1812406614435696600,&#xd;
+		&quot;passengerIdCard&quot;:&quot;20247141638&quot;,&#xd;
+		&quot;passengerName&quot;:&quot;test20247141638&quot;,&#xd;
+		&quot;passengerType&quot;:&quot;2&quot;,&#xd;
+		&quot;seatTypeCode&quot;:&quot;2&quot;&#xd;
+	}],&#xd;
+	&quot;trainCode&quot;:&quot;G1&quot;&#xd;
+}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -155,6 +168,43 @@
           </HeaderManager>
           <hashTree/>
           <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="查看结果树">
+            <boolProp name="ResultCollector.error_logging">false</boolProp>
+            <objProp>
+              <name>saveConfig</name>
+              <value class="SampleSaveConfiguration">
+                <time>true</time>
+                <latency>true</latency>
+                <timestamp>true</timestamp>
+                <success>true</success>
+                <label>true</label>
+                <code>true</code>
+                <message>true</message>
+                <threadName>true</threadName>
+                <dataType>true</dataType>
+                <encoding>false</encoding>
+                <assertions>true</assertions>
+                <subresults>true</subresults>
+                <responseData>false</responseData>
+                <samplerData>false</samplerData>
+                <xml>false</xml>
+                <fieldNames>true</fieldNames>
+                <responseHeaders>false</responseHeaders>
+                <requestHeaders>false</requestHeaders>
+                <responseDataOnError>false</responseDataOnError>
+                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                <assertionsResultsToSave>0</assertionsResultsToSave>
+                <bytes>true</bytes>
+                <sentBytes>true</sentBytes>
+                <url>true</url>
+                <threadCounts>true</threadCounts>
+                <idleTime>true</idleTime>
+                <connectTime>true</connectTime>
+              </value>
+            </objProp>
+            <stringProp name="filename"></stringProp>
+          </ResultCollector>
+          <hashTree/>
+          <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="聚合报告">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>

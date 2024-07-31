@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSON;
 import com.jiawa.train.business.domain.ConfirmOrder;
 import com.jiawa.train.business.dto.ConfirmOrderMQDto;
 import com.jiawa.train.business.enums.ConfirmOrderStatusEnum;
-import com.jiawa.train.business.enums.RocketMQTopicEnum;
 import com.jiawa.train.business.mapper.ConfirmOrderMapper;
 import com.jiawa.train.business.req.ConfirmOrderDoReq;
 import com.jiawa.train.business.req.ConfirmOrderTicketReq;
@@ -16,7 +15,6 @@ import com.jiawa.train.exception.BusinessException;
 import com.jiawa.train.exception.BusinessExceptionEnum;
 import com.jiawa.train.util.SnowUtil;
 import jakarta.annotation.Resource;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -32,9 +30,9 @@ public class BeforeConfirmOrderService {
     @Resource
     private SkTokenService skTokenService;
     @Resource
-    private RocketMQTemplate rocketMQTemplate;
-    @Resource
     private ConfirmOrderMapper confirmOrderMapper;
+    @Resource
+    private ConfirmOrderService confirmOrderService;
 
 
 
@@ -82,10 +80,11 @@ public class BeforeConfirmOrderService {
         confirmOrderMQDto.setDate(date);
         confirmOrderMQDto.setTrainCode(trainCode);
         confirmOrderMQDto.setLogId(MDC.get("LOG_ID"));
-        String reqJson = JSON.toJSONString(confirmOrderMQDto);
-        LOG.info("发送MQ，排队购票 reqJson:{}", reqJson);
-        rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(), reqJson);
-        LOG.info("排队购票，发送MQ结束");
+        confirmOrderService.doConfirm(confirmOrderMQDto);
+//        String reqJson = JSON.toJSONString(confirmOrderMQDto);
+//        LOG.info("发送MQ，排队购票 reqJson:{}", reqJson);
+//        rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(), reqJson);
+//        LOG.info("排队购票，发送MQ结束");
         return confirmOrder.getId();
     }
 
