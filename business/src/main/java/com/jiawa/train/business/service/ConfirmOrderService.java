@@ -135,8 +135,10 @@ public class ConfirmOrderService {
         if (setIfAbsent) {
             LOG.info("恭喜抢到锁了! lockKey:{}", lockKey);
         } else {
-            LOG.info("抢锁失败! lockKey:{}", lockKey);
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//            LOG.info("抢锁失败! lockKey:{}", lockKey);
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+            LOG.info("抢锁失败! 其他线程正在出票");
+            return;
         }
 //        RLock lock = null;
         try {
@@ -164,7 +166,23 @@ public class ConfirmOrderService {
                     LOG.info("需要处理的票数：{}", confirmOrders.size());
                 }
                 for (ConfirmOrder confirmOrder : confirmOrders) {
-                    sell(confirmOrder);
+                    /**
+                     * 如果某一订单余票不足
+                     * 会捕获异常，来自reduceticket
+                     *  更新余票状态为EMPTY
+                     *
+                     */
+                    try {
+                        sell(confirmOrder);
+                    } catch (BusinessException e) {
+                        if (e.getE().equals(BusinessExceptionEnum.BUSSINESS_ORDER_TICKET_COUNT_ERROR)) {
+                            LOG.info("余票不足，更新余票状态为EMPTY");
+                            confirmOrder.setStatus(ConfirmOrderStatusEnum.EMPTY.getCode());
+                            updateStatus(confirmOrder);
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
             }
         } finally {
@@ -464,6 +482,7 @@ public class ConfirmOrderService {
 
     /**
      * 更新状态
+     *
      * @param confirmOrder
      */
     public void updateStatus(ConfirmOrder confirmOrder) {
@@ -514,8 +533,7 @@ public class ConfirmOrderService {
     }
 
     // 扣减余票库存
-    private void reduceTicket(ConfirmOrderDoReq req, DailyTrainTicket
-            dailyTrainTicket) {
+    private void reduceTicket(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
         for (ConfirmOrderTicketReq ticketReq : req.getTickets()) {
             String seatTypeCode = ticketReq.getSeatTypeCode();
             SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getCode, seatTypeCode);
