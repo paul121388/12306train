@@ -58,11 +58,11 @@ public class ConfirmOrderDoReq {
     @NotEmpty(message = "【车票】不能为空")
     private List<ConfirmOrderTicketReq> tickets;
 
-//    @NotBlank(message = "【图片验证码】不能为空")
-//    private String imageCode;
-//
-//    @NotBlank(message = "【图片验证码token】不能为空")
-//    private String imageCodeToken;
+    @NotBlank(message = "【图片验证码】不能为空")
+    private String imageCode;
+
+    @NotBlank(message = "【图片验证码token】不能为空")
+    private String imageCodeToken;
 
 
     public Long getMemberId() {
@@ -129,6 +129,22 @@ public class ConfirmOrderDoReq {
         this.logID = logID;
     }
 
+    public String getImageCode() {
+        return imageCode;
+    }
+
+    public void setImageCode(String imageCode) {
+        this.imageCode = imageCode;
+    }
+
+    public String getImageCodeToken() {
+        return imageCodeToken;
+    }
+
+    public void setImageCodeToken(String imageCodeToken) {
+        this.imageCodeToken = imageCodeToken;
+    }
+
     @Override
     public String toString() {
         return "ConfirmOrderDoReq{" +
@@ -140,6 +156,8 @@ public class ConfirmOrderDoReq {
                 ", end='" + end + '\'' +
                 ", dailyTrainTicketId=" + dailyTrainTicketId +
                 ", tickets=" + tickets +
+                ", imageCode='" + imageCode + '\'' +
+                ", imageCodeToken='" + imageCodeToken + '\'' +
                 '}';
     }
 }
