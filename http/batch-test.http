@@ -16,5 +16,9 @@ content-type: application/json
   "jobGroupName": "default"
 }
 
+###
+
+GET http://8.134.171.250/batch/hello
+Accept: application/json
 
 

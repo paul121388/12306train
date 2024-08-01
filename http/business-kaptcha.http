@@ -2,3 +2,5 @@ GET http://localhost:8000/business/kaptcha/image-code/12
 Accept: application/json
 
 ###
+GET http://8.134.171.250/business/kaptcha/image-code/12
+Accept: application/json

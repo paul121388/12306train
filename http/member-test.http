@@ -15,3 +15,6 @@ Accept: application/json
 GET http://localhost:8000/business/test
 Accept: application/json
 
+###
+GET http://8.134.171.250/member/hello
+Accept: application/json

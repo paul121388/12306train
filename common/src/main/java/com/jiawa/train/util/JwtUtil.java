@@ -2,6 +2,7 @@ package com.jiawa.train.util;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.crypto.GlobalBouncyCastleProvider;
 import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTPayload;
@@ -19,6 +20,8 @@ public class JwtUtil {
     private static final String key = "Jiawa12306";
 
     public static String createToken(Long id, String mobile){
+        LOG.info("开始生成JWT: id={}, mobile={}", id, mobile);
+        GlobalBouncyCastleProvider.setUseBouncyCastle(false);
         // 设置时间
         // token签发时间，token过期时间，token生效时间
         DateTime now = DateTime.now();
@@ -41,6 +44,8 @@ public class JwtUtil {
     }
 
     public static boolean validate(String token){
+        LOG.info("开始校验JWT: token={}", token);
+        GlobalBouncyCastleProvider.setUseBouncyCastle(false);
         JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
         boolean validate = jwt.validate(0);
         LOG.info("validate: {}", validate);
@@ -48,6 +53,7 @@ public class JwtUtil {
     }
 
     public static JSONObject getJSONObject(String token){
+        GlobalBouncyCastleProvider.setUseBouncyCastle(false);
         JWT jwt = JWTUtil.parseToken(token).setKey(key.getBytes());
         JSONObject payloads = jwt.getPayloads();
         payloads.remove(JWTPayload.ISSUED_AT);
