@@ -3,8 +3,6 @@ Accept: application/json
 
 ###
 
-GET http://8.134.171.250/business/hello
-Accept: application/json
 
 
 
